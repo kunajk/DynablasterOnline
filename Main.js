@@ -4,7 +4,7 @@ var width = window.innerWidth,
 	ratio = window.devicePixelRatio;
 	
 var sprites = new Image();
-sprites.src = "Bomberman II Sprites.png";
+sprites.src = "DynablasteOnline.png";
 
 var canvas = document.getElementById("canvas"),
 	context = canvas.getContext("2d");
@@ -109,27 +109,20 @@ class Player
 
 var AnimFPS = 7;
 
-var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 20, 93, 23, 21, 3, 4.0);
-var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 20, 120, 23, 21, 3, 4.0);
-var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 20, 146, 23, 21, 3, 4.0);
-var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 20, 174, 23, 21, 3, 4.0);
-var P1_AnimationIdle = new AnimatedSprite(sprites, 2, 24, 63, 23, 28, 2, 4.0);
+var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 22, 24, 3, 4.0);
+var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 22, 24, 3, 4.0);
+var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 22, 24, 3, 4.0);
+var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 22, 24, 3, 4.0);
+var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 22, 24, 3, 4.0);
 
-var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 96, 93, 23, 21, 3, 4.0);
-var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 96, 120, 23, 21, 3, 4.0);
-var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 96, 146, 23, 21, 3, 4.0);
-var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 96, 174, 23, 21, 3, 4.0);
-var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 100, 63, 23, 28, 2, 4.0);
-
-var P3_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 172, 93, 23, 21, 3, 4.0);
-var P3_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 172, 120, 23, 21, 3, 4.0);
-var P3_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 172, 146, 23, 21, 3, 4.0);
-var P3_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 172, 174, 23, 21, 3, 4.0);
-var P3_AnimationIdle = new AnimatedSprite(sprites, 4, 175, 63, 23, 28, 2, 4.0);
+var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 22, 24, 3, 4.0);
+var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 22, 24, 3, 4.0);
+var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 22, 24, 3, 4.0);
+var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 22, 24, 3, 4.0);
+var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 22, 24, 3, 4.0);
 
 var Player_1 = new Player(150, 150, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
 var Player_2 = new Player(400, 400, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
-var Player_3 = new Player(565, 100, P3_AnimationUp, P3_AnimationLeft, P3_AnimationDown, P3_AnimationRight, P3_AnimationIdle);
 
 var Mapa = new	Level(19, 13);
 Mapa.TworzMape();
@@ -157,7 +150,6 @@ function draw()
 	Mapa.Draw();
 	Player_1.Draw();
 	Player_2.Draw();
-	Player_3.Draw();
 }
 
 
@@ -171,7 +163,6 @@ function update()
 
 	Player_1.Update(dt);
 	Player_2.Update(dt);
-	Player_3.Update(dt);
 
 	draw();
 	requestAnimationFrame(update);
