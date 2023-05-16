@@ -12,12 +12,9 @@ const Tiles = {
 	RAMKA_BOK_PRAWO_2: 9,
 	RAMKA_BOK_PRAWO_3: 10,
 	RAMKA_DOL_1: 11,
-	RAMKA_DOL_2: 12,
-	RAMKA_DOL_3: 13,
-	RAMKA_DOL_4: 14,
-	RAMKA_BOK_LEWO_1: 16,
-	RAMKA_BOK_LEWO_2: 17,
-	RAMKA_BOK_LEWO_3: 18
+	RAMKA_BOK_LEWO_1: 12,
+	RAMKA_BOK_LEWO_2: 13,
+	RAMKA_BOK_LEWO_3: 14
 }
 class Level
 {
@@ -25,8 +22,8 @@ class Level
 	constructor(SizeX, SizeY)
 	{
 		this.Sprite = new Image();
-		this.Sprite.src = "Bomberman II Sprites.png";
-		this.TilesGfx = new StaticSprite(this.Sprite, 1, 19, 16, 16, 19, this.Scale);
+		this.Sprite.src = "DynablasteOnline.png";
+		this.TilesGfx = new StaticSprite(this.Sprite, 2, 131, 16, 16, 19, 1, this.Scale);
 		this.SizeX = SizeX;
 		this.SizeY = SizeY;
 	}
@@ -47,13 +44,12 @@ class Level
 		{
 			this.Level[x][0] = Tiles.RAMKA_SRODEK_1 + x%2;
 			this.Level[x][1] = Tiles.TRAWA_CIEN;
-			this.Level[x][this.SizeY - 1] = Tiles.RAMKA_DOL_1 + x%4;
+			this.Level[x][this.SizeY - 1] = Tiles.RAMKA_DOL_1;
 		}
 
 		for(let x= 0; x<this.SizeX; x++)
 		{
-			this.Level[x][this.SizeY - 2] = Tiles.TRAWA;
-			this.Level[x][this.SizeY - 1] = Tiles.RAMKA_DOL_1 + x % 4;
+			this.Level[x][this.SizeY - 1] = Tiles.RAMKA_DOL_1;
 		}
 
 		for(let y= 1; y<this.SizeY - 1; y++)
@@ -63,7 +59,7 @@ class Level
 		}
 
 		// Trawa
-		for(let y= 2; y<this.SizeY-2; y++)
+		for(let y= 2; y<this.SizeY-1; y++)
 		{
 			for(let x= 1; x<this.SizeX - 1; x++)
 			{
@@ -73,7 +69,14 @@ class Level
 				}
 				else
 				{
-					this.Level[x][y] = Tiles.TRAWA;
+					if(x%2 == 0)
+					{
+						this.Level[x][y] = Tiles.TRAWA_CIEN;
+					}
+					else
+					{
+						this.Level[x][y] = Tiles.TRAWA;
+					}
 				}
 			}
 		}
