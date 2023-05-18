@@ -2,7 +2,14 @@
 var width = window.innerWidth,
 	height = window.innerHeight,
 	ratio = window.devicePixelRatio;
-	
+
+var FPS = 0;
+
+var Debug = {
+	ShowCollisions: false,
+	ShowFPS: false
+}
+
 var sprites = new Image();
 sprites.src = "DynablasteOnline.png";
 
@@ -26,6 +33,15 @@ window.addEventListener('keydown', function(event) {
 window.addEventListener('keyup', function(event) {
 	event = event || window.event;
     delete PressedKeys[event.keyCode];
+
+	switch (event.keyCode) {
+		case 67: // 'C' Toggle show debug collisions
+			Debug.ShowCollisions = !Debug.ShowCollisions;
+			break;
+		case 70: // 'C' Toggle showFPS
+			Debug.ShowFPS = !Debug.ShowFPS;
+			break;
+	}
 }, false);
 
 requestAnimationFrame(update);
@@ -74,10 +90,14 @@ class Player
 			
 			let UpPoint = this.Collision.GetUpLeftPoint();
 			let DownPoint = this.Collision.GetDownLeftPoint();
-			
+			let CenterPoint = {x: UpPoint.x, y:(UpPoint.y + DownPoint.y)/2.0};
+
 			let IsUpPointCollision = Mapa.HasCollisionWithPoint(UpPoint.x - this.PlayerSpeed*DeltaTime, UpPoint.y);
 			let IsDownPointCollision = Mapa.HasCollisionWithPoint(DownPoint.x - this.PlayerSpeed*DeltaTime, DownPoint.y);
-			
+			let IsCenterPointCollision = Mapa.HasCollisionWithPoint(CenterPoint.x - DistanceToMove, CenterPoint.y);
+
+			let PrevDistanceToMove = DistanceToMove;
+
 			if(IsUpPointCollision)
 			{
 				DistanceToMove = Math.abs(UpPoint.x - Mapa.GetNearestXOutsideCollision(UpPoint.x - DistanceToMove, UpPoint.y));
@@ -85,6 +105,15 @@ class Player
 			else if(IsDownPointCollision)
 			{
 				DistanceToMove = Math.abs(DownPoint.x - Mapa.GetNearestXOutsideCollision(DownPoint.x - DistanceToMove, DownPoint.y));
+			}
+
+			if(IsUpPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_Y += (PrevDistanceToMove - DistanceToMove)
+			}
+			else if(IsDownPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_Y -= (PrevDistanceToMove - DistanceToMove)
 			}
 
 			this.Pos_X -= DistanceToMove;
@@ -99,7 +128,10 @@ class Player
 
 			let IsUpPointCollision = Mapa.HasCollisionWithPoint(UpPoint.x + this.PlayerSpeed*DeltaTime, UpPoint.y);
 			let IsDownPointCollision = Mapa.HasCollisionWithPoint(DownPoint.x + this.PlayerSpeed*DeltaTime, DownPoint.y);
-			
+			let IsCenterPointCollision = Mapa.HasCollisionWithPoint(CenterPoint.x + DistanceToMove, CenterPoint.y);
+
+			let PrevDistanceToMove = DistanceToMove;
+
 			if(IsUpPointCollision)
 			{
 				DistanceToMove = Math.abs(UpPoint.x - Mapa.GetNearestXOutsideCollision(UpPoint.x + DistanceToMove, UpPoint.y));
@@ -107,6 +139,15 @@ class Player
 			else if(IsDownPointCollision)
 			{
 				DistanceToMove = Math.abs(DownPoint.x - Mapa.GetNearestXOutsideCollision(DownPoint.x + DistanceToMove, DownPoint.y));
+			}
+
+			if(IsUpPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_Y += (PrevDistanceToMove - DistanceToMove)
+			}
+			else if(IsDownPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_Y -= (PrevDistanceToMove - DistanceToMove)
 			}
 
 			this.Pos_X += DistanceToMove;
@@ -233,14 +274,33 @@ Player_2.SetKeys(P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_UP, P2_KEY_DOWN);
 function draw()
 {
 	context.clearRect(0, 0, width, height);
-	context.font = "14px serif";
-	context.fillText("Poruszanie postaci w stylu gry Dyna Blasters Bomberman - Janusz Kunowski", 10, 25);
-	context.fillText("Player 1: sterowanie strzalkami", 10, 50);
-	context.fillText("Player 2: sterowanie klawiszami W S A D", 10, 75);
 
 	Mapa.Draw();
 	Player_1.Draw();
 	Player_2.Draw();
+
+	if(Debug.ShowFPS)
+	{
+		context.beginPath();
+		context.font = "bold 12pt Courier";
+		context.strokeStyle = 'black';
+		context.lineWidth = 3;
+		context.strokeText("FPS: " + FPS, width - 70, 15);
+		context.fillStyle = 'white';
+		context.fillText("FPS: " + FPS, width - 70, 15);
+	}
+
+	context.beginPath();
+	context.font = "8pt serif";
+	context.rect(190, 5, 500, 40);
+	context.fillStyle = "#FFFFFF"
+	context.fill();
+	context.fillStyle = "#000000"
+	context.fillText("Player 1: sterowanie strzalkami", 200, 15);
+	context.fillText("Player 2: sterowanie klawiszami W S A D", 200, 30);
+	context.fillStyle = "#440303"
+	context.fillText("C - Show collisions", 400, 15);
+	context.fillText("F - Show FPS", 400, 30);
 }
 
 
@@ -251,6 +311,7 @@ function update()
 	var now = Date.now();
 	var dt = (now - lastUpdate)/1000.0;
 	lastUpdate = now;
+	FPS = Math.round((1000 - dt) * (60 / 1000));
 
 	dt = Math.min(dt, 1.0);
 
@@ -261,59 +322,3 @@ function update()
 	requestAnimationFrame(update);
 }
 
-
-/* 
-
-Zrezygnowalem z ponizszego kodu bo nie pozwalal mi na jednoczesne poruszanie sie dwoch graczy
-Zamiast tego przechowuje informacje o aktualnie wcisnietych klawiszach w tablicy i dzieki 
-temu moge sprawdzac jednoczesnie obu graczy
-
-window.addEventListener('keydown', function(event) {
-	switch (event.keyCode) {
-		case 37: // Left
-			Player_1.CurrentAnim = Player_1.AnimationLeft;
-			Player_1.DistanceToMove_X += 30;
-			Player_1.Direction_X = -1.0;
-			break;
-
-		case 38: // Up
-			Player_1.CurrentAnim = Player_1.AnimationUp;
-			Player_1.DistanceToMove_Y += 30;
-			Player_1.Direction_Y = -1.0;
-			break;
-
-		case 39: // Right
-			Player_1.CurrentAnim = Player_1.AnimationRight;
-			Player_1.DistanceToMove_X += 30;
-			Player_1.Direction_X = 1.0;
-			break;
-
-		case 40: // Down
-			Player_1.CurrentAnim = Player_1.AnimationDown;
-			Player_1.DistanceToMove_Y += 30;
-			Player_1.Direction_Y = 1.0;
-			break;
-
-		case 68: //d (Player2 right)
-			Player_2.CurrentAnim = Player_2.AnimationRight;
-			Player_2.DistanceToMove_X += 30;
-			Player_2.Direction_X = 1.0;
-			break;
-		case 83: //s (Player2 down)
-			Player_2.CurrentAnim = Player_2.AnimationDown;
-			Player_2.DistanceToMove_Y += 30;
-			Player_2.Direction_Y = 1.0;
-			break;
-		case 65: //a (Player2 left)
-			Player_2.CurrentAnim = Player_2.AnimationLeft;
-			Player_2.DistanceToMove_X += 30;
-			Player_2.Direction_X = -1.0;
-			break;
-		case 87: //w (Player2 up)
-			Player_2.CurrentAnim = Player_2.AnimationUp;
-			Player_2.DistanceToMove_Y += 30;
-			Player_2.Direction_Y = -1.0;
-			break;
-
-	}
-}, false); */

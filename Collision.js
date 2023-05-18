@@ -16,6 +16,9 @@ class RectangleCollision
 
     DebugDraw()
     {
+        if(!Debug.ShowCollisions)
+            return;
+
         let Parent_X = (this.Parent) ? this.Parent.Pos_X : 0.0;
         let Parent_Y = (this.Parent) ? this.Parent.Pos_Y : 0.0;
 
