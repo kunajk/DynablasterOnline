@@ -161,6 +161,8 @@ function update()
 	var dt = (now - lastUpdate)/1000.0;
 	lastUpdate = now;
 
+	dt = Math.min(dt, 1.0);
+
 	Player_1.Update(dt);
 	Player_2.Update(dt);
 
