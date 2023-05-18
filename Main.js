@@ -95,7 +95,8 @@ class Player
 
 			let UpPoint = this.Collision.GetUpRightPoint();
 			let DownPoint = this.Collision.GetDownRightPoint();
-			
+			let CenterPoint = {x: UpPoint.x, y:(UpPoint.y + DownPoint.y)/2.0};
+
 			let IsUpPointCollision = Mapa.HasCollisionWithPoint(UpPoint.x + this.PlayerSpeed*DeltaTime, UpPoint.y);
 			let IsDownPointCollision = Mapa.HasCollisionWithPoint(DownPoint.x + this.PlayerSpeed*DeltaTime, DownPoint.y);
 			
@@ -116,9 +117,13 @@ class Player
 
 			let RightPoint = this.Collision.GetUpRightPoint();
 			let LeftPoint = this.Collision.GetUpLeftPoint();
-			
+			let CenterPoint = {x: (RightPoint.x + LeftPoint.x)/2.0, y: RightPoint.y};
+
 			let IsRightPointCollision = Mapa.HasCollisionWithPoint(RightPoint.x, RightPoint.y - DistanceToMove);
 			let IsLeftPointCollision = Mapa.HasCollisionWithPoint(LeftPoint.x, LeftPoint.y - DistanceToMove);
+			let IsCenterPointCollision = Mapa.HasCollisionWithPoint(CenterPoint.x, CenterPoint.y - DistanceToMove);
+
+			let PrevDistanceToMove = DistanceToMove;
 
 			if(IsRightPointCollision)
 			{
@@ -129,6 +134,15 @@ class Player
 				DistanceToMove = Math.abs(LeftPoint.y - Mapa.GetNearestYOutsideCollision(LeftPoint.x, LeftPoint.y - DistanceToMove));
 			}
 
+			if(IsRightPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_X -= (PrevDistanceToMove - DistanceToMove)
+			}
+			else if(IsLeftPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_X += (PrevDistanceToMove - DistanceToMove)
+			}
+
 			this.Pos_Y -= DistanceToMove;
 		} 
 		else if(PressedKeys[this.KEY_DOWN]) 
@@ -137,9 +151,13 @@ class Player
 
 			let RightPoint = this.Collision.GetDownRightPoint();
 			let LeftPoint = this.Collision.GetDownLeftPoint();
-			
+			let CenterPoint = {x: (RightPoint.x + LeftPoint.x)/2.0, y: RightPoint.y};
+
 			let IsRightPointCollision = Mapa.HasCollisionWithPoint(RightPoint.x, RightPoint.y + DistanceToMove);
 			let IsLeftPointCollision = Mapa.HasCollisionWithPoint(LeftPoint.x, LeftPoint.y + DistanceToMove);
+			let IsCenterPointCollision = Mapa.HasCollisionWithPoint(CenterPoint.x, CenterPoint.y + DistanceToMove);
+
+			let PrevDistanceToMove = DistanceToMove;
 
 			if(IsRightPointCollision)
 			{
@@ -148,6 +166,15 @@ class Player
 			else if(IsLeftPointCollision)
 			{
 				DistanceToMove = Math.abs(LeftPoint.y - Mapa.GetNearestYOutsideCollision(LeftPoint.x, LeftPoint.y + DistanceToMove));
+			}
+
+			if(IsRightPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_X -= (PrevDistanceToMove - DistanceToMove)
+			}
+			else if(IsLeftPointCollision && !IsCenterPointCollision)
+			{
+				this.Pos_X += (PrevDistanceToMove - DistanceToMove)
 			}
 
 			this.Pos_Y += DistanceToMove;
