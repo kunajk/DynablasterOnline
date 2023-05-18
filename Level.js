@@ -19,16 +19,16 @@ const Tiles = {
 
 class Tile
 {
-	constructor(Pos_X, PosY, Sprite, TileData, SizeX, SizeY)
+	constructor(Pos_X, Pos_Y, Sprite, TileData, SizeX, SizeY)
 	{
-		this.PosX = Pos_X;
-		this.PosY = PosY;
+		this.Pos_X = Pos_X;
+		this.Pos_Y = Pos_Y;
 		this.Sprite = Sprite;
 		this.SpriteIndex = TileData.Index;
 		this.HasCollision = TileData.Collision;
 		this.SizeX = SizeX;
 		this.SizeY = SizeY;
-		this.Collision = new RectangleCollision(Pos_X, PosY, SizeX, SizeY);
+		this.Collision = new RectangleCollision(Pos_X, Pos_Y, SizeX, SizeY);
 	}
 
 	SetTileData(TileData)
@@ -39,17 +39,20 @@ class Tile
 
 	HasCollisionWithRect(OtherRectCoision)
 	{
-		return !this.HasCollision || this.Collision.HasCollisionWithRect(OtherRectCoision);
+		return this.HasCollision && this.Collision.HasCollisionWithRect(OtherRectCoision);
 	}
 
 	HasCollisionWithPoint(PointX, PointY)
 	{
-		return !this.HasCollision || this.Collision.HasCollisionWithPoint(PointX, PointY);
+		return this.HasCollision && this.Collision.HasCollisionWithPoint(PointX, PointY);
 	}
 
 	Draw()
 	{
-		this.Sprite.DrawFrame(this.PosX, this.PosY, this.SpriteIndex);
+		this.Sprite.DrawFrame(this.Pos_X, this.Pos_Y, this.SpriteIndex);
+		
+		if(this.HasCollision)
+			this.Collision.DebugDraw();
 	}
 }
 
@@ -137,5 +140,31 @@ class Level
 
 	Update(DeltaTime)
 	{
+	}
+
+	PixelToTile(PointX, PointY)
+	{
+		let tileSize = this.Scale * 16.0;
+		let x = Math.floor(PointX/tileSize);
+		let y = Math.floor(PointY/tileSize);
+		return { x, y };
+	}
+
+	HasCollisionWithPoint(PointX, PointY)
+	{
+		let TileCoord = this.PixelToTile(PointX, PointY);
+		return this.Level[TileCoord.x][TileCoord.y].HasCollisionWithPoint(PointX, PointY);
+	}
+
+	GetNearestXOutsideCollision(PointX, PointY)
+	{
+		let TileCoord = this.PixelToTile(PointX, PointY);
+		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestXOutsideCollision(PointX, PointY);
+	}
+
+	GetNearestYOutsideCollision(PointX, PointY)
+	{
+		let TileCoord = this.PixelToTile(PointX, PointY);
+		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestYOutsideCollision(PointX, PointY);
 	}
 }

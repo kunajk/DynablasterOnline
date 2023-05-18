@@ -2,12 +2,12 @@
 class StaticSprite
 {
     currentFrame = 0;
-    constructor(sprite, startPosX, startPosY, height, width, framesNum, margin, scale) {
+    constructor(sprite, startPosX, startPosY, width, height, framesNum, margin, scale) {
         this.sprite = sprite;
         this.startPosX = startPosX;
         this.startPosY = startPosY;
-        this.height = height;
         this.width = width;
+        this.height = height;
         this.framesNum = framesNum;
         this.scale = scale;
 		this.margin = margin;
@@ -23,14 +23,14 @@ class AnimatedSprite
     currentFrame = 0;
     timer = 0.0;
     frameTime = 0;
-    constructor(sprite, fps, startPosX, startPosY, height, width, framesNum, scale) {
+    constructor(sprite, fps, startPosX, startPosY, width, height, framesNum, scale) {
         this.sprite = sprite;
         this.fps = fps;
         this.frameTime = 1.0/fps;
         this.startPosX = startPosX;
         this.startPosY = startPosY;
-        this.height = height;
         this.width = width;
+        this.height = height;
         this.framesNum = framesNum;
         this.scale = scale;
     }

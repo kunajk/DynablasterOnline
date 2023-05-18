@@ -34,16 +34,19 @@ class Player
 {
 	CurrentAnim;
 	PlayerSpeed = 200.0;
-	constructor(StartPosX, StartPosY, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle)
+	constructor(StartPos_X, StartPos_Y, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle)
 	{
-		this.PlayerPosX = StartPosX;
-		this.PlayerPosY = StartPosY;
+		this.Pos_X = StartPos_X;
+		this.Pos_Y = StartPos_Y;
 		this.AnimationUp = AnimationUp;
 		this.AnimationLeft = AnimationLeft;
 		this.AnimationDown = AnimationDown;
 		this.AnimationRight = AnimationRight;
 		this.AnimationIdle = AnimationIdle;
 		this.CurrentAnim = this.AnimationIdle;
+
+		let Scale = 4.0;
+		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
 	}
 
 	SetKeys(Left, Right, Up, Down) {
@@ -55,71 +58,132 @@ class Player
 
 	Draw()
 	{
-		this.CurrentAnim.Draw(this.PlayerPosX, this.PlayerPosY);
+		this.CurrentAnim.Draw(this.Pos_X, this.Pos_Y);
+
+		this.Collision.DebugDraw();
 	}
 
 	Update(DeltaTime)
 	{
 		this.CurrentAnim.Update(DeltaTime);
+		let DistanceToMove = this.PlayerSpeed*DeltaTime;
 
 		if(PressedKeys[this.KEY_LEFT]) 
 		{
 			this.CurrentAnim = this.AnimationLeft;
-			this.PlayerPosX -= this.PlayerSpeed*DeltaTime;
+			
+			let UpPoint = this.Collision.GetUpLeftPoint();
+			let DownPoint = this.Collision.GetDownLeftPoint();
+			
+			let IsUpPointCollision = Mapa.HasCollisionWithPoint(UpPoint.x - this.PlayerSpeed*DeltaTime, UpPoint.y);
+			let IsDownPointCollision = Mapa.HasCollisionWithPoint(DownPoint.x - this.PlayerSpeed*DeltaTime, DownPoint.y);
+			
+			if(IsUpPointCollision)
+			{
+				DistanceToMove = Math.abs(UpPoint.x - Mapa.GetNearestXOutsideCollision(UpPoint.x - DistanceToMove, UpPoint.y));
+			}
+			else if(IsDownPointCollision)
+			{
+				DistanceToMove = Math.abs(DownPoint.x - Mapa.GetNearestXOutsideCollision(DownPoint.x - DistanceToMove, DownPoint.y));
+			}
+
+			this.Pos_X -= DistanceToMove;
 		} 
 		else if(PressedKeys[this.KEY_RIGHT]) 
 		{
 			this.CurrentAnim = this.AnimationRight;
-			this.PlayerPosX += this.PlayerSpeed*DeltaTime;
+
+			let UpPoint = this.Collision.GetUpRightPoint();
+			let DownPoint = this.Collision.GetDownRightPoint();
+			
+			let IsUpPointCollision = Mapa.HasCollisionWithPoint(UpPoint.x + this.PlayerSpeed*DeltaTime, UpPoint.y);
+			let IsDownPointCollision = Mapa.HasCollisionWithPoint(DownPoint.x + this.PlayerSpeed*DeltaTime, DownPoint.y);
+			
+			if(IsUpPointCollision)
+			{
+				DistanceToMove = Math.abs(UpPoint.x - Mapa.GetNearestXOutsideCollision(UpPoint.x + DistanceToMove, UpPoint.y));
+			}
+			else if(IsDownPointCollision)
+			{
+				DistanceToMove = Math.abs(DownPoint.x - Mapa.GetNearestXOutsideCollision(DownPoint.x + DistanceToMove, DownPoint.y));
+			}
+
+			this.Pos_X += DistanceToMove;
 		} 
 		else if(PressedKeys[this.KEY_UP]) 
 		{
 			this.CurrentAnim = this.AnimationUp;
-			this.PlayerPosY -= this.PlayerSpeed*DeltaTime;
+
+			let RightPoint = this.Collision.GetUpRightPoint();
+			let LeftPoint = this.Collision.GetUpLeftPoint();
+			
+			let IsRightPointCollision = Mapa.HasCollisionWithPoint(RightPoint.x, RightPoint.y - DistanceToMove);
+			let IsLeftPointCollision = Mapa.HasCollisionWithPoint(LeftPoint.x, LeftPoint.y - DistanceToMove);
+
+			if(IsRightPointCollision)
+			{
+				DistanceToMove = Math.abs(RightPoint.y - Mapa.GetNearestYOutsideCollision(RightPoint.x, RightPoint.y - DistanceToMove));
+			}
+			else if(IsLeftPointCollision)
+			{
+				DistanceToMove = Math.abs(LeftPoint.y - Mapa.GetNearestYOutsideCollision(LeftPoint.x, LeftPoint.y - DistanceToMove));
+			}
+
+			this.Pos_Y -= DistanceToMove;
 		} 
 		else if(PressedKeys[this.KEY_DOWN]) 
 		{
 			this.CurrentAnim = this.AnimationDown;
-			this.PlayerPosY += this.PlayerSpeed*DeltaTime;
+
+			let RightPoint = this.Collision.GetDownRightPoint();
+			let LeftPoint = this.Collision.GetDownLeftPoint();
+			
+			let IsRightPointCollision = Mapa.HasCollisionWithPoint(RightPoint.x, RightPoint.y + DistanceToMove);
+			let IsLeftPointCollision = Mapa.HasCollisionWithPoint(LeftPoint.x, LeftPoint.y + DistanceToMove);
+
+			if(IsRightPointCollision)
+			{
+				DistanceToMove = Math.abs(RightPoint.y - Mapa.GetNearestYOutsideCollision(RightPoint.x, RightPoint.y + DistanceToMove));
+			}
+			else if(IsLeftPointCollision)
+			{
+				DistanceToMove = Math.abs(LeftPoint.y - Mapa.GetNearestYOutsideCollision(LeftPoint.x, LeftPoint.y + DistanceToMove));
+			}
+
+			this.Pos_Y += DistanceToMove;
 		} 
 		else 
 		{
 			this.CurrentAnim = this.AnimationIdle;
 		}
 
-		if(this.PlayerPosX > width-100)
-			this.PlayerPosX = width-100;
+		if(this.Pos_X > width-100)
+			this.Pos_X = width-100;
 
-		if(this.PlayerPosX < 0)
-			this.PlayerPosX = 0;
+		if(this.Pos_X < 0)
+			this.Pos_X = 0;
 
-		if(this.DistanceToMove_X < 0)
-			this.DistanceToMove_X = 0;
+		if(this.Pos_Y > height-100)
+			this.Pos_Y = height-100;
 
-		if(this.PlayerPosY > height-100)
-			this.PlayerPosY = height-100;
-
-		if(this.PlayerPosY < 0)
-			this.PlayerPosY = 0;
-
-		if(this.DistanceToMove_Y < 0)
-			this.DistanceToMove_Y = 0;
+		if(this.Pos_Y < 0)
+			this.Pos_Y = 0;
 	}
 }
 
 var AnimFPS = 7;
 
-var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 22, 24, 3, 4.0);
-var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 22, 24, 3, 4.0);
-var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 22, 24, 3, 4.0);
-var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 22, 24, 3, 4.0);
-var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 22, 24, 3, 4.0);
+var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 24, 22, 3, 4.0);
+var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 4.0);
+var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 4.0);
+var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 4.0);
+var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 4.0);
 
-var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 22, 24, 3, 4.0);
-var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 22, 24, 3, 4.0);
-var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 22, 24, 3, 4.0);
-var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 22, 24, 3, 4.0);
-var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 22, 24, 3, 4.0);
+var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 4.0);
+var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 4.0);
+var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 4.0);
+var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 4.0);
+var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 4.0);
 
 var Player_1 = new Player(150, 150, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
 var Player_2 = new Player(400, 400, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
