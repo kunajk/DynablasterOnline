@@ -42,6 +42,9 @@ window.addEventListener('keyup', function(event) {
 			Debug.ShowFPS = !Debug.ShowFPS;
 			break;
 	}
+
+	Player_1.OnKeyUp(event.keyCode);
+	Player_2.OnKeyUp(event.keyCode);
 }, false);
 
 requestAnimationFrame(update);
@@ -65,7 +68,8 @@ class Player
 		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
 	}
 
-	SetKeys(Left, Right, Up, Down, Bomb) {
+	SetKeys(Left, Right, Up, Down, Bomb)
+	{
 		this.KEY_LEFT = Left;
 		this.KEY_RIGHT = Right;
 		this.KEY_UP = Up;
@@ -228,8 +232,18 @@ class Player
 
 		if(PressedKeys[this.KEY_BOMB])
 		{
-			let CenterPoint = this.Collision.GetCenterPoint();
-			Mapa.SpawnBomb(CenterPoint.x, CenterPoint.y, 1);
+
+		}
+	}
+
+	OnKeyUp(KeyCode)
+	{
+		switch (KeyCode)
+		{
+			case this.KEY_BOMB:
+				let CenterPoint = this.Collision.GetCenterPoint();
+				Mapa.SpawnBomb(CenterPoint.x, CenterPoint.y, 1);
+				break;
 		}
 	}
 }
