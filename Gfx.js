@@ -9,8 +9,8 @@ class StaticSprite
         this.width = width;
         this.height = height;
         this.framesNum = framesNum;
+        this.margin = margin;
         this.scale = scale;
-		this.margin = margin;
     }
 
     DrawFrame(PosX, PosY, Frame)
@@ -23,7 +23,7 @@ class AnimatedSprite
     currentFrame = 0;
     timer = 0.0;
     frameTime = 0;
-    constructor(sprite, fps, startPosX, startPosY, width, height, framesNum, scale) {
+    constructor(sprite, fps, startPosX, startPosY, width, height, framesNum, margin, scale) {
         this.sprite = sprite;
         this.fps = fps;
         this.frameTime = 1.0/fps;
@@ -32,6 +32,7 @@ class AnimatedSprite
         this.width = width;
         this.height = height;
         this.framesNum = framesNum;
+        this.margin = margin;
         this.scale = scale;
     }
 
@@ -48,6 +49,6 @@ class AnimatedSprite
 
     Draw(PosX, PosY)
     {
-        context.drawImage(this.sprite, this.startPosX + this.width * this.currentFrame, this.startPosY, this.width, this.height, PosX, PosY, this.width * this.scale, this.height * this.scale);
+        context.drawImage(this.sprite, this.startPosX + (this.width + 2*this.margin) * this.currentFrame, this.startPosY, this.width, this.height, PosX, PosY, this.width * this.scale, this.height * this.scale);
     }
 }

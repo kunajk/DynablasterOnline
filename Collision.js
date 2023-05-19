@@ -129,4 +129,11 @@ class RectangleCollision
         let Parent_Y = (this.Parent) ? this.Parent.Pos_Y : 0.0;
         return {x: Parent_X + this.Pos_X, y: Parent_Y + this.Pos_Y + this.Height};
     }
+
+    GetCenterPoint()
+    {
+        let Parent_X = (this.Parent) ? this.Parent.Pos_X : 0.0;
+        let Parent_Y = (this.Parent) ? this.Parent.Pos_Y : 0.0;
+        return {x: Parent_X + this.Pos_X + 0.5 * this.Width, y: Parent_Y + this.Pos_Y + 0.5 * this.Height};
+    }
 }

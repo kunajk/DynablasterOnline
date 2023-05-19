@@ -59,6 +59,8 @@ class Tile
 class Level
 {
 	Scale = 4;
+	DynamicObjects = [];
+
 	constructor(SizeX, SizeY)
 	{
 		this.Sprite = new Image();
@@ -136,10 +138,19 @@ class Level
 				this.Level[x][y].Draw();
 			}
 		}
+
+		for (let i = 0; i < this.DynamicObjects.length; i++) 
+		{
+			this.DynamicObjects[i].Draw();
+		}
 	}
 
 	Update(DeltaTime)
 	{
+		for (let i = 0; i < this.DynamicObjects.length; i++) 
+		{
+			this.DynamicObjects[i].Update(DeltaTime);
+		}
 	}
 
 	PixelToTile(PointX, PointY)
@@ -166,5 +177,20 @@ class Level
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
 		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestYOutsideCollision(PointX, PointY);
+	}
+
+	SpawnBomb(Pos_X, Pos_Y, Power)
+	{
+		let TileCoord = this.PixelToTile(Pos_X, Pos_Y);	
+		let tileSize = this.Scale * 16.0;
+		let NewActor = new Bomb(TileCoord.x * tileSize, TileCoord.y * tileSize, Power);
+		NewActor.SetParent(this);
+		this.DynamicObjects.push(NewActor);
+	}
+
+	RemoveObject(ObjectToRemove)
+	{
+		const index = this.DynamicObjects.indexOf(ObjectToRemove);
+		this.DynamicObjects.splice(index, 1);
 	}
 }

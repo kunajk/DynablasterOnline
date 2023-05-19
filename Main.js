@@ -65,11 +65,12 @@ class Player
 		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
 	}
 
-	SetKeys(Left, Right, Up, Down) {
+	SetKeys(Left, Right, Up, Down, Bomb) {
 		this.KEY_LEFT = Left;
 		this.KEY_RIGHT = Right;
 		this.KEY_UP = Up;
 		this.KEY_DOWN = Down;
+		this.KEY_BOMB = Bomb;
 	}
 
 	Draw()
@@ -225,33 +226,27 @@ class Player
 			this.CurrentAnim = this.AnimationIdle;
 		}
 
-		if(this.Pos_X > width-100)
-			this.Pos_X = width-100;
-
-		if(this.Pos_X < 0)
-			this.Pos_X = 0;
-
-		if(this.Pos_Y > height-100)
-			this.Pos_Y = height-100;
-
-		if(this.Pos_Y < 0)
-			this.Pos_Y = 0;
+		if(PressedKeys[this.KEY_BOMB])
+		{
+			let CenterPoint = this.Collision.GetCenterPoint();
+			Mapa.SpawnBomb(CenterPoint.x, CenterPoint.y, 1);
+		}
 	}
 }
 
 var AnimFPS = 7;
 
-var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 24, 22, 3, 4.0);
-var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 4.0);
-var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 4.0);
-var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 4.0);
-var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 4.0);
+var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 24, 22, 3, 0, 4.0);
+var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 0, 4.0);
+var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 0, 4.0);
+var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 0, 4.0);
+var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 0, 4.0);
 
-var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 4.0);
-var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 4.0);
-var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 4.0);
-var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 4.0);
-var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 4.0);
+var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 0, 4.0);
+var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 0, 4.0);
+var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 0, 4.0);
+var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 0, 4.0);
+var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, 4.0);
 
 var Player_1 = new Player(150, 150, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
 var Player_2 = new Player(400, 400, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
@@ -263,13 +258,15 @@ let P1_KEY_LEFT = 37; // Strzalka w lewo
 let P1_KEY_RIGHT = 39; // Strzalka w prawo
 let P1_KEY_UP = 38; // Strzalka w gore
 let P1_KEY_DOWN = 40; // Strzalka w dol
+let P1_KEY_BOMB = 32 // Spacja
 let P2_KEY_LEFT = 65; // Klawisz 'A'
 let P2_KEY_RIGHT = 68; // Klawisz 'D'
 let P2_KEY_UP = 87; // Klawisz 'W'
 let P2_KEY_DOWN = 83; // Klawisz 'S'
+let P2_KEY_BOMB = 96; // Numpad 0
 
-Player_1.SetKeys(P1_KEY_LEFT, P1_KEY_RIGHT, P1_KEY_UP, P1_KEY_DOWN);
-Player_2.SetKeys(P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_UP, P2_KEY_DOWN);
+Player_1.SetKeys(P1_KEY_LEFT, P1_KEY_RIGHT, P1_KEY_UP, P1_KEY_DOWN, P1_KEY_BOMB);
+Player_2.SetKeys(P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_UP, P2_KEY_DOWN, P2_KEY_BOMB);
 
 function draw()
 {
@@ -317,6 +314,7 @@ function update()
 
 	Player_1.Update(dt);
 	Player_2.Update(dt);
+	Mapa.Update(dt);
 
 	draw();
 	requestAnimationFrame(update);
