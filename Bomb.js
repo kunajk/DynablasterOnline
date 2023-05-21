@@ -3,16 +3,21 @@ class Bomb
 {
     LifeTime = 3.0;
 
-    constructor(Pos_X, Pos_Y, Power)
+    constructor(Power)
     {
         let Scale = 4;
-        this.Pos_X = Pos_X;
-        this.Pos_Y = Pos_Y;
         let Sprite = new Image();
 		Sprite.src = "DynablasteOnline.png";
         this.Animation = new AnimatedSprite(Sprite, 4, 2, 149, 16, 16, 3, 1, Scale);;
         this.Power = Power;
-        this.Collision = new RectangleCollision(Pos_X, Pos_Y, 16*Scale, 16*Scale);
+        this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
+        this.Collision.SetParent(this);
+    }
+
+    SetPos(Pos_X, Pos_Y)
+    {
+        this.Pos_X = Pos_X;
+        this.Pos_Y = Pos_Y;
     }
 
     SetParent(Parent)
@@ -40,6 +45,8 @@ class Bomb
 
     Destroy()
     {
+        let TileCoord =  this.Parent.PixelToTile(this.Pos_X, this.Pos_Y);
+        this.Parent.AddActor(TileCoord.x, TileCoord.y, new Explosion(this.Power));
         this.Parent.RemoveObject(this);
     }
 }

@@ -66,8 +66,8 @@ class Level
 		this.Sprite = new Image();
 		this.Sprite.src = "DynablasteOnline.png";
 		this.TilesGfx = new StaticSprite(this.Sprite, 2, 131, 16, 16, 19, 1, this.Scale);
-		this.SizeX = SizeX;
-		this.SizeY = SizeY;
+		this.SizeX = 2*SizeX+3;
+		this.SizeY = 2*SizeY+3;
 	}
 
 	TworzMape()
@@ -161,6 +161,14 @@ class Level
 		return { x, y };
 	}
 
+	TileToPixel(TileX, TileY)
+	{
+		let tileSize = this.Scale * 16.0;
+		let x = TileX * tileSize;
+		let y = TileY * tileSize;
+		return { x, y };
+	}
+
 	HasCollisionWithPoint(PointX, PointY)
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
@@ -179,11 +187,10 @@ class Level
 		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestYOutsideCollision(PointX, PointY);
 	}
 
-	SpawnBomb(Pos_X, Pos_Y, Power)
+	AddActor(Tile_X, Tile_Y, NewActor)
 	{
-		let TileCoord = this.PixelToTile(Pos_X, Pos_Y);	
 		let tileSize = this.Scale * 16.0;
-		let NewActor = new Bomb(TileCoord.x * tileSize, TileCoord.y * tileSize, Power);
+		NewActor.SetPos(Tile_X * tileSize, Tile_Y * tileSize);
 		NewActor.SetParent(this);
 		this.DynamicObjects.push(NewActor);
 	}

@@ -242,7 +242,9 @@ class Player
 		{
 			case this.KEY_BOMB:
 				let CenterPoint = this.Collision.GetCenterPoint();
-				Mapa.SpawnBomb(CenterPoint.x, CenterPoint.y, 1);
+				let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
+				let Power = 3;
+				Mapa.AddActor(TileCoord.x, TileCoord.y, new Bomb(Power));
 				break;
 		}
 	}
@@ -265,7 +267,7 @@ var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, 4.0);
 var Player_1 = new Player(150, 150, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
 var Player_2 = new Player(400, 400, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
 
-var Mapa = new	Level(19, 13);
+var Mapa = new	Level(6, 4);
 Mapa.TworzMape();
 
 let P1_KEY_LEFT = 37; // Strzalka w lewo
