@@ -1,6 +1,6 @@
 class Explosion
 {
-    LifeTime = 0.5;
+    LifeTime = 5.5;
     Timer = 0;
     CurrentFrame = 0;
     FramesNum = 4;
@@ -10,13 +10,13 @@ class Explosion
         let Sprite = new Image();
         Sprite.src = "DynablasteOnline.png";
         let FramesNum = 4;
-        this.UpGfx = new StaticSprite(Sprite, 2, 167, 16, 16, FramesNum, 1, Scale);
-        this.LeftGfx = new StaticSprite(Sprite, 72, 167, 16, 16, FramesNum, 1, Scale);
-        this.DownGfx = new StaticSprite(Sprite, 144, 167, 16, 16, FramesNum, 1, Scale);
-        this.RightGfx = new StaticSprite(Sprite, 216, 167, 16, 16, FramesNum, 1, Scale);
-        this.HorizontalGfx = new StaticSprite(Sprite, 288, 167, 16, 16, FramesNum, 1, Scale);
-        this.VerticalGfx = new StaticSprite(Sprite, 360, 167, 16, 16, FramesNum, 1, Scale);
-        this.CenterGfx = new StaticSprite(Sprite, 432, 167, 16, 16, FramesNum, 1, Scale);
+        this.UpGfx = new StaticSprite(Sprite, 4, 167, 16, 16, FramesNum, 1, Scale);
+        this.LeftGfx = new StaticSprite(Sprite, 76, 167, 16, 16, FramesNum, 1, Scale);
+        this.DownGfx = new StaticSprite(Sprite, 148, 167, 16, 16, FramesNum, 1, Scale);
+        this.RightGfx = new StaticSprite(Sprite, 220, 167, 16, 16, FramesNum, 1, Scale);
+        this.HorizontalGfx = new StaticSprite(Sprite, 292, 167, 16, 16, FramesNum, 1, Scale);
+        this.VerticalGfx = new StaticSprite(Sprite, 364, 167, 16, 16, FramesNum, 1, Scale);
+        this.CenterGfx = new StaticSprite(Sprite, 436, 167, 16, 16, FramesNum, 1, Scale);
         this.Power = Power;
     }
 
