@@ -58,7 +58,7 @@ class Tile
 
 class Level
 {
-	Scale = 4;
+	Scale = GameScale;
 	DynamicObjects = [];
 
 	constructor(SizeX, SizeY)

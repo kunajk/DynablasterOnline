@@ -6,7 +6,7 @@ class Explosion
     FramesNum = 4;
     constructor(Power)
     {
-        let Scale = 4;
+        let Scale = GameScale;
         let Sprite = new Image();
         Sprite.src = "DynablasteOnline.png";
         let FramesNum = 4;

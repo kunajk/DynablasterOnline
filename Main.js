@@ -4,6 +4,7 @@ var width = window.innerWidth,
 	ratio = window.devicePixelRatio;
 
 var FPS = 0;
+var GameScale = height/250;
 
 var Debug = {
 	ShowCollisions: false,
@@ -52,7 +53,7 @@ requestAnimationFrame(update);
 class Player
 {
 	CurrentAnim;
-	PlayerSpeed = 200.0;
+	PlayerSpeed = 50.0 * GameScale;
 	constructor(StartPos_X, StartPos_Y, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle)
 	{
 		this.Pos_X = StartPos_X;
@@ -64,7 +65,7 @@ class Player
 		this.AnimationIdle = AnimationIdle;
 		this.CurrentAnim = this.AnimationIdle;
 
-		let Scale = 4.0;
+		let Scale = GameScale;
 		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
 	}
 
@@ -252,20 +253,20 @@ class Player
 
 var AnimFPS = 7;
 
-var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 24, 22, 3, 0, 4.0);
-var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 0, 4.0);
-var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 0, 4.0);
-var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 0, 4.0);
-var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 0, 4.0);
+var P1_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 0, 26, 24, 22, 3, 0, GameScale);
+var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 0, GameScale);
+var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 0, GameScale);
+var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 0, GameScale);
+var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 0, GameScale);
 
-var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 0, 4.0);
-var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 0, 4.0);
-var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 0, 4.0);
-var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 0, 4.0);
-var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, 4.0);
+var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 0, GameScale);
+var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 0, GameScale);
+var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 0, GameScale);
+var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 0, GameScale);
+var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, GameScale);
 
-var Player_1 = new Player(150, 150, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
-var Player_2 = new Player(400, 400, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
+var Player_1 = new Player(37 * GameScale, 37 * GameScale, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
+var Player_2 = new Player(100 * GameScale, 100 * GameScale, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
 
 var Mapa = new	Level(6, 4);
 Mapa.TworzMape();

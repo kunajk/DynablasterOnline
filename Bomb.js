@@ -5,10 +5,10 @@ class Bomb
 
     constructor(Power)
     {
-        let Scale = 4;
+        let Scale = GameScale;
         let Sprite = new Image();
 		Sprite.src = "DynablasteOnline.png";
-        this.Animation = new AnimatedSprite(Sprite, 4, 2, 149, 16, 16, 3, 1, Scale);;
+        this.Animation = new AnimatedSprite(Sprite, 4, 2, 149, 16, 16, 3, 1, Scale);
         this.Power = Power;
         this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
         this.Collision.SetParent(this);
