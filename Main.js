@@ -235,7 +235,7 @@ class Player
 
 		}
 	}
-
+	Power = 1;
 	OnKeyUp(KeyCode)
 	{
 		switch (KeyCode)
@@ -243,8 +243,8 @@ class Player
 			case this.KEY_BOMB:
 				let CenterPoint = this.Collision.GetCenterPoint();
 				let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
-				let Power = 3;
-				Mapa.AddActor(TileCoord.x, TileCoord.y, new Bomb(Power));
+
+				Mapa.AddActor(TileCoord.x, TileCoord.y, new Bomb(this.Power++));
 				break;
 		}
 	}

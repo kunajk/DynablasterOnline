@@ -1,6 +1,6 @@
 class Explosion
 {
-    LifeTime = 5.5;
+    LifeTime = 0.5;
     Timer = 0;
     CurrentFrame = 0;
     FramesNum = 4;
@@ -45,18 +45,47 @@ class Explosion
     Draw()
     {
         let TileCoord = this.Parent.PixelToTile(this.Pos_X, this.Pos_Y);
-        this.UpGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y-this.Power).y, this.CurrentFrame);
-        this.DownGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y+this.Power).y, this.CurrentFrame);
-        this.LeftGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x-this.Power, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
-        this.RightGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x+this.Power, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
+
+        let DrawX_Plus = true;
+        let DrawX_Minus = true;
+        let DrawY_Plus = true;
+        let DrawY_Minus = true;
+
         this.CenterGfx.DrawFrame(this.Pos_X, this.Pos_Y, this.CurrentFrame);
         for(let i = 1; i<this.Power; i++)
         {
-            this.HorizontalGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y+i).y, this.CurrentFrame);
-            this.HorizontalGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y-i).y, this.CurrentFrame);
-            this.VerticalGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x+i, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
-            this.VerticalGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x-i, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
+            if(DrawY_Plus && !this.Parent.HasTileCollision(TileCoord.x, TileCoord.y+i))
+                this.HorizontalGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y+i).y, this.CurrentFrame);
+            else
+                DrawY_Plus = false;
+
+            if(DrawY_Minus && !this.Parent.HasTileCollision(TileCoord.x, TileCoord.y-i))
+                this.HorizontalGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y-i).y, this.CurrentFrame);
+            else
+                DrawY_Minus = false;
+
+            if(DrawX_Plus && !this.Parent.HasTileCollision(TileCoord.x+i, TileCoord.y))
+                this.VerticalGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x+i, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
+            else
+                DrawX_Plus = false;
+
+            if(DrawX_Minus && !this.Parent.HasTileCollision(TileCoord.x-i, TileCoord.y))
+                this.VerticalGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x-i, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
+            else
+                DrawX_Minus = false;
         }
+
+        if(DrawY_Minus && !this.Parent.HasTileCollision(TileCoord.x, TileCoord.y-this.Power))
+            this.UpGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y-this.Power).y, this.CurrentFrame);
+
+        if(DrawY_Plus && !this.Parent.HasTileCollision(TileCoord.x, TileCoord.y+this.Power))
+            this.DownGfx.DrawFrame(this.Pos_X, this.Parent.TileToPixel(TileCoord.x, TileCoord.y+this.Power).y, this.CurrentFrame);
+
+        if(DrawX_Minus && !this.Parent.HasTileCollision(TileCoord.x-this.Power, TileCoord.y))
+            this.LeftGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x-this.Power, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
+
+        if(DrawX_Plus && !this.Parent.HasTileCollision(TileCoord.x+this.Power, TileCoord.y))
+            this.RightGfx.DrawFrame(this.Parent.TileToPixel(TileCoord.x+this.Power, TileCoord.y).x, this.Pos_Y, this.CurrentFrame);
     }
 
     Destroy()

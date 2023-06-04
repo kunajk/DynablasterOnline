@@ -169,6 +169,14 @@ class Level
 		return { x, y };
 	}
 
+	HasTileCollision(TileX, TileY)
+	{
+		if(TileX < this.SizeX && TileY < this.SizeY && TileX >= 0 && TileY >= 0)
+			return this.Level[TileX][TileY].HasCollision;
+		else
+			return true;
+	}
+
 	HasCollisionWithPoint(PointX, PointY)
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
