@@ -230,11 +230,6 @@ class Player
 		{
 			this.CurrentAnim = this.AnimationIdle;
 		}
-
-		if(PressedKeys[this.KEY_BOMB])
-		{
-
-		}
 	}
 	Power = 1;
 	OnKeyUp(KeyCode)
@@ -265,11 +260,15 @@ var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 0
 var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 0, GameScale);
 var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, GameScale);
 
-var Player_1 = new Player(37 * GameScale, 37 * GameScale, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
-var Player_2 = new Player(100 * GameScale, 100 * GameScale, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
-
 var Mapa = new	Level(6, 4);
 Mapa.TworzMape();
+
+let P1StartPos = Mapa.TileToPixel(1, 1);
+let P2StartPos = Mapa.TileToPixel(13, 9);
+let offsetX = (P1_AnimationIdle.width - 16)*GameScale*0.5;
+let offsetY = (P1_AnimationIdle.height - 16)*GameScale;
+var Player_1 = new Player(P1StartPos.x - offsetX, P1StartPos.y - offsetY, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
+var Player_2 = new Player(P2StartPos.x - offsetX, P2StartPos.y - offsetY, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
 
 let P1_KEY_LEFT = 37; // Strzalka w lewo
 let P1_KEY_RIGHT = 39; // Strzalka w prawo

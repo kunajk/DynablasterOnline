@@ -127,6 +127,48 @@ class Level
 				}
 			}
 		}
+
+		//Dodajemy pomaranczowe cegly
+		for(let y= 1; y < this.SizeY-1; y++)
+		{
+			for (let x = 1; x < this.SizeX - 1; x++)
+			{
+				// Nie chcemy cegiel w punktach startowych gracza, oraz w bezposrednim sasiedztwie
+				if(!(
+					(x == 1) && (y == 1)
+					||
+					(x == 1) && (y == 2)
+					||
+					(x == 2) && (y == 1)
+					||
+					(x == this.SizeX - 2) && (y == this.SizeY - 2)
+					||
+					(x == this.SizeX - 2) && (y == this.SizeY - 3)
+					||
+					(x == this.SizeX - 3) && (y == this.SizeY - 2)
+					||
+					(x == 1) && (y == this.SizeY - 2)
+					||
+					(x == 1) && (y == this.SizeY - 3)
+					||
+					(x == 2) && (y == this.SizeY - 2)
+					||
+					(x == this.SizeX - 2) && (y == 1)
+					||
+					(x == this.SizeX - 3) && (y == 1)
+					||
+					(x == this.SizeX - 2) && (y == 2)
+				))
+				{
+					if(!this.Level[x][y].HasCollision)
+					{
+						let chance = 65;
+						if(Math.random() * 100 < chance)
+							this.AddActor(x, y, new Brick());
+					}
+				}
+			}
+		}
 	}
 
 	Draw()
@@ -180,18 +222,47 @@ class Level
 	HasCollisionWithPoint(PointX, PointY)
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
-		return this.Level[TileCoord.x][TileCoord.y].HasCollisionWithPoint(PointX, PointY);
+		if(!this.Level[TileCoord.x][TileCoord.y].HasCollisionWithPoint(PointX, PointY))
+		{
+			for (let i = 0; i < this.DynamicObjects.length; i++)
+			{
+				if(this.DynamicObjects[i].Collision.HasCollisionWithPoint(PointX, PointY))
+					return true;
+			}
+		}
+		else
+			return true;
 	}
 
 	GetNearestXOutsideCollision(PointX, PointY)
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
+
+		if(!this.Level[TileCoord.x][TileCoord.y].HasCollisionWithPoint(PointX, PointY))
+		{
+			for (let i = 0; i < this.DynamicObjects.length; i++)
+			{
+				if(this.DynamicObjects[i].Collision.HasCollisionWithPoint(PointX, PointY))
+					return this.DynamicObjects[i].Collision.GetNearestXOutsideCollision(PointX, PointY);
+			}
+		}
+
 		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestXOutsideCollision(PointX, PointY);
 	}
 
 	GetNearestYOutsideCollision(PointX, PointY)
 	{
 		let TileCoord = this.PixelToTile(PointX, PointY);
+
+		if(!this.Level[TileCoord.x][TileCoord.y].HasCollisionWithPoint(PointX, PointY))
+		{
+			for (let i = 0; i < this.DynamicObjects.length; i++)
+			{
+				if(this.DynamicObjects[i].Collision.HasCollisionWithPoint(PointX, PointY))
+					return this.DynamicObjects[i].Collision.GetNearestYOutsideCollision(PointX, PointY);
+			}
+		}
+
 		return this.Level[TileCoord.x][TileCoord.y].Collision.GetNearestYOutsideCollision(PointX, PointY);
 	}
 
