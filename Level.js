@@ -214,9 +214,29 @@ class Level
 	HasTileCollision(TileX, TileY)
 	{
 		if(TileX < this.SizeX && TileY < this.SizeY && TileX >= 0 && TileY >= 0)
-			return this.Level[TileX][TileY].HasCollision;
+		{
+			if(this.Level[TileX][TileY].HasCollision)
+			{
+				return true;
+			}
+			else
+			{
+				let tileSize = this.Scale * 16.0;
+				let Collision = new RectangleCollision(TileX * tileSize, TileY * tileSize, tileSize, tileSize);
+				for (let i = 0; i < this.DynamicObjects.length; i++)
+				{
+					if(this.DynamicObjects[i].Collision.HasCollisionWithRect(Collision))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+		}
 		else
+		{
 			return true;
+		}
 	}
 
 	HasCollisionWithPoint(PointX, PointY)
@@ -271,6 +291,7 @@ class Level
 		let tileSize = this.Scale * 16.0;
 		NewActor.SetPos(Tile_X * tileSize, Tile_Y * tileSize);
 		NewActor.SetParent(this);
+		NewActor.BeginPlay();
 		this.DynamicObjects.push(NewActor);
 	}
 

@@ -23,6 +23,11 @@ class Brick
         this.Parent = Parent;
     }
 
+    BeginPlay()
+    {
+
+    }
+
     Update(DeltaTime)
     {/*
         this.Animation.Update(DeltaTime);

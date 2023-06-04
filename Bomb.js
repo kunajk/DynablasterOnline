@@ -1,4 +1,4 @@
-
+//import { Explosion } from "./Explosion.js";
 class Bomb
 {
     LifeTime = 3.0;
@@ -25,6 +25,11 @@ class Bomb
         this.Parent = Parent;
     }
 
+    BeginPlay()
+    {
+
+    }
+
     Update(DeltaTime)
     {
         this.Animation.Update(DeltaTime);
@@ -45,7 +50,8 @@ class Bomb
 
     Destroy()
     {
-        let TileCoord =  this.Parent.PixelToTile(this.Pos_X, this.Pos_Y);
+        let CenterPoint = this.Collision.GetCenterPoint();
+        let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
         this.Parent.AddActor(TileCoord.x, TileCoord.y, new Explosion(this.Power));
         this.Parent.RemoveObject(this);
     }
