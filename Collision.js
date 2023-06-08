@@ -14,6 +14,18 @@ class RectangleCollision
         return this;
 	}
 
+    GetPosX()
+    {
+        let Parent_X = (this.Parent) ? this.Parent.GetPosX() : 0.0;
+        return this.Pos_X + Parent_X;
+    }
+
+    GetPosY()
+    {
+        let Parent_Y = (this.Parent) ? this.Parent.GetPosY() : 0.0;
+        return this.Pos_Y + Parent_Y;
+    }
+
     DebugDraw()
     {
         if(!Debug.ShowCollisions)
@@ -32,13 +44,10 @@ class RectangleCollision
 
     HasCollisionWithRect(OtherRectCoision)
     {
-        let Parent_X = (this.Parent) ? this.Parent.Pos_X : 0.0;
-        let Parent_Y = (this.Parent) ? this.Parent.Pos_Y : 0.0;
-
-        return (this.Pos_X + Parent_X< OtherRectCoision.Pos_X + OtherRectCoision.Width &&
-                this.Pos_X + Parent_X + this.Width > OtherRectCoision.Pos_X &&
-                this.Pos_Y + Parent_Y < OtherRectCoision.Pos_Y + OtherRectCoision.Height &&
-                this.Height + this.Pos_Y + Parent_Y > OtherRectCoision.Pos_Y);
+        return (this.GetPosX()< OtherRectCoision.GetPosX() + OtherRectCoision.Width &&
+            this.GetPosX() + this.Width > OtherRectCoision.GetPosX() &&
+            this.GetPosY() < OtherRectCoision.GetPosY() + OtherRectCoision.Height &&
+            this.Height + this.GetPosY() > OtherRectCoision.GetPosY());
     }
 
     GetNearestXOutsideCollision(PointX, PointY)

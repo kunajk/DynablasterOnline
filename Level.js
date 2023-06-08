@@ -31,6 +31,16 @@ class Tile
 		this.Collision = new RectangleCollision(Pos_X, Pos_Y, SizeX, SizeY);
 	}
 
+	GetPosX()
+	{
+		return this.Pos_X;
+	}
+
+	GetPosY()
+	{
+		return this.Pos_Y;
+	}
+
 	SetTileData(TileData)
 	{
 		this.SpriteIndex = TileData.Index;
@@ -187,6 +197,16 @@ class Level
 		}
 	}
 
+	GetPosX()
+	{
+		return 0;
+	}
+
+	GetPosY()
+	{
+		return 0;
+	}
+
 	Update(DeltaTime)
 	{
 		for (let i = 0; i < this.DynamicObjects.length; i++) 
@@ -213,11 +233,14 @@ class Level
 
 	HasTileCollision(TileX, TileY)
 	{
+		let HasCollision = false;
+		let CollidingObjects = [];
+
 		if(TileX < this.SizeX && TileY < this.SizeY && TileX >= 0 && TileY >= 0)
 		{
 			if(this.Level[TileX][TileY].HasCollision)
 			{
-				return true;
+				HasCollision = true;
 			}
 			else
 			{
@@ -227,16 +250,31 @@ class Level
 				{
 					if(this.DynamicObjects[i].Collision.HasCollisionWithRect(Collision))
 					{
-						return true;
+						HasCollision = true;
+						CollidingObjects.push(this.DynamicObjects[i]);
 					}
 				}
-				return false;
 			}
 		}
 		else
 		{
-			return true;
+			HasCollision = true;
 		}
+
+		return {HasCollision, CollidingObjects};
+	}
+
+	GetCollidingObjects(CollisionBox)
+	{
+		let Result = [];
+
+		for (let i = 0; i < this.DynamicObjects.length; i++)
+		{
+			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox))
+				Result.push(this.DynamicObjects[i]);
+		}
+
+		return Result;
 	}
 
 	HasCollisionWithPoint(PointX, PointY)

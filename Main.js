@@ -78,6 +78,18 @@ class Player
 		this.KEY_BOMB = Bomb;
 	}
 
+	GetPosX()
+	{
+		let Parent_X = (this.Parent) ? this.Parent.GetPosX() : 0.0;
+		return this.Pos_X + Parent_X;
+	}
+
+	GetPosY()
+	{
+		let Parent_Y = (this.Parent) ? this.Parent.GetPosY() : 0.0;
+		return this.Pos_Y + Parent_Y;
+	}
+
 	Draw()
 	{
 		this.CurrentAnim.Draw(this.Pos_X, this.Pos_Y);
