@@ -23,7 +23,9 @@ class AnimatedSprite
     currentFrame = 0;
     timer = 0.0;
     frameTime = 0;
-    OnAnimationEnded = null;
+    OnAnimationEnded = { Instance : null, Function : null};
+
+    Enabled = true;
     constructor(sprite, fps, startPosX, startPosY, width, height, framesNum, margin, scale, looped= true) {
         this.sprite = sprite;
         this.fps = fps;
@@ -40,6 +42,9 @@ class AnimatedSprite
 
     Update(DeltaTime)
     {
+        if(!this.Enabled)
+            return;
+
         this.timer += DeltaTime;
 
         if(this.timer >= this.frameTime)
@@ -47,8 +52,14 @@ class AnimatedSprite
             this.timer -= this.frameTime;
             this.currentFrame = (this.currentFrame + 1)%this.framesNum;
 
-            if(this.currentFrame == 0 && this.OnAnimationEnded != null)
-                this.OnAnimationEnded();
+            if(this.currentFrame == 0)
+            {
+                if(this.OnAnimationEnded.Instance != null && this.OnAnimationEnded.Function != null)
+                    this.OnAnimationEnded.Function.call(this.OnAnimationEnded.Instance);
+
+                if(!this.looped)
+                    this.Enabled = false;
+            }
         }
     }
 
