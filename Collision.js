@@ -44,10 +44,16 @@ class RectangleCollision
 
     HasCollisionWithRect(OtherRectCoision)
     {
-        return (this.GetPosX()< OtherRectCoision.GetPosX() + OtherRectCoision.Width &&
-            this.GetPosX() + this.Width > OtherRectCoision.GetPosX() &&
-            this.GetPosY() < OtherRectCoision.GetPosY() + OtherRectCoision.Height &&
-            this.Height + this.GetPosY() > OtherRectCoision.GetPosY());
+        let pX = this.GetPosX();
+        let pY = this.GetPosY();
+        let oth_pX = OtherRectCoision.GetPosX();
+        let oth_pY = OtherRectCoision.GetPosY();
+        let VerySmallNumber = 0.00001;
+
+        return (this.GetPosX()< OtherRectCoision.GetPosX() + OtherRectCoision.Width - VerySmallNumber &&
+            this.GetPosX() + this.Width - VerySmallNumber > OtherRectCoision.GetPosX() &&
+            this.GetPosY() < OtherRectCoision.GetPosY() + OtherRectCoision.Height - VerySmallNumber &&
+            this.Height + this.GetPosY() - VerySmallNumber > OtherRectCoision.GetPosY());
     }
 
     GetNearestXOutsideCollision(PointX, PointY)

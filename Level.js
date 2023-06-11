@@ -173,8 +173,8 @@ class Level
 					if(!this.Level[x][y].HasCollision)
 					{
 						let chance = 65;
-						if(Math.random() * 100 < chance)
-							this.AddActor(x, y, new Brick());
+						//if(Math.random() * 100 < chance)
+						//	this.AddActor(x, y, new Brick());
 					}
 				}
 			}
