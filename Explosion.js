@@ -1,11 +1,10 @@
 
 class FireSquare
 {
-    LifeTime = 0.5;
     Timer = 0;
     CurrentFrame = 0;
     FramesNum = 4;
-    constructor(Pos_X, Pos_Y, ExplosionGfx)
+    constructor(Pos_X, Pos_Y, ExplosionGfx, LifeTime)
     {
         this.Pos_X = Pos_X;
         this.Pos_Y = Pos_Y;
@@ -13,6 +12,8 @@ class FireSquare
         this.ExplosionGfx = ExplosionGfx;
         this.Collision = new RectangleCollision(0, 0, 16*GameScale, 16*GameScale);
         this.Collision.SetParent(this);
+        this.IsVisible = true;
+        this.LifeTime = LifeTime;
     }
 
     SetParent(Parent)
@@ -22,14 +23,12 @@ class FireSquare
 
     GetPosX()
     {
-        let Parent_X = (this.Parent) ? this.Parent.GetPosX() : 0.0;
-        return this.Pos_X + Parent_X;
+        return this.Pos_X;
     }
 
     GetPosY()
     {
-        let Parent_Y = (this.Parent) ? this.Parent.GetPosY() : 0.0;
-        return this.Pos_Y + Parent_Y;
+        return this.Pos_Y;
     }
 
     Update(DeltaTime)
@@ -39,11 +38,12 @@ class FireSquare
 
         if(this.CurrentFrame >= this.FramesNum)
         {
+            this.CurrentFrame = 0;
             this.Destroy();
         }
 
         let ObjectsToDestroy = Mapa.GetCollidingObjects(this.Collision);
-        for(let obj of ObjectsToDestroy)
+        for(let obj of  ObjectsToDestroy)
         {
             if(obj != this.Parent && obj != this)
                 obj.Destroy();
@@ -52,18 +52,22 @@ class FireSquare
 
     Draw()
     {
-        this.ExplosionGfx.DrawFrame(this.Pos_X, this.Pos_Y, this.CurrentFrame);
-        this.Collision.DebugDraw();
+        if(this.IsVisible)
+        {
+            this.ExplosionGfx.DrawFrame(this.Pos_X, this.Pos_Y, this.CurrentFrame);
+            this.Collision.DebugDraw();
+        }
     }
 
     Destroy()
     {
+        this.IsVisible = false;
     }
 }
 
 class Explosion
 {
-    LifeTime = 2.5;
+    LifeTime = 0.5;
     Timer = 0;
     CurrentFrame = 0;
     FramesNum = 4;
@@ -116,37 +120,37 @@ class Explosion
 
         if(!CollisionTest.HasCollision)
         {
-            if(false && IsLast)
+            if(IsLast)
             {
                 if(IsUpOrLeft)
                 {
                     if(IsHorizontal)
                     {
-                        this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.UpGfx));
+                        this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.UpGfx, this.LifeTime));
                     }
                     else
                     {
-                        this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.LeftGfx));
+                        this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.LeftGfx, this.LifeTime));
                     }
                 }
                 else
                 {
                     if(IsHorizontal)
                     {
-                        this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.DownGfx));
+                        this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.DownGfx, this.LifeTime));
                     }
                     else
                     {
-                        this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.RightGfx));
+                        this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.RightGfx, this.LifeTime));
                     }
                 }
             }
             else
             {
                 if(IsHorizontal)
-                    this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.HorizontalGfx));
+                    this.FireObjects.push(new FireSquare(this.Pos_X, this.Parent.TileToPixel(Tile_X, Tile_Y).y, this.HorizontalGfx, this.LifeTime));
                 else
-                    this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.VerticalGfx));
+                    this.FireObjects.push(new FireSquare(this.Parent.TileToPixel(Tile_X, Tile_Y).x, this.Pos_Y, this.VerticalGfx, this.LifeTime));
             }
         }
         else
@@ -163,17 +167,16 @@ class Explosion
     }
     BeginPlay()
     {
-        this.FireObjects.push(new FireSquare(this.Pos_X, this.Pos_Y, this.CenterGfx));
+        this.FireObjects.push(new FireSquare(this.Pos_X, this.Pos_Y, this.CenterGfx, this.LifeTime));
 
         let CenterPoint = this.Collision.GetCenterPoint();
         let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
 
         for(let i = 1; i <= this.Power; i++)
         {
-            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x, TileCoord.y+i, true, i==this.Power-1);
+            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x, TileCoord.y+i, true, i==this.Power, false);
             if(Result.HasCollision)
             {
-                this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x, TileCoord.y+i, true, i==this.Power-1);
                 break;
             }
 
@@ -181,21 +184,21 @@ class Explosion
 
         for(let i = 1; i <= this.Power; i++)
         {
-            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x, TileCoord.y-i, true, i==this.Power-1);
+            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x, TileCoord.y-i, true, i==this.Power, true);
             if(Result.HasCollision)
                 break;
         }
 
         for(let i = 1; i <= this.Power; i++)
         {
-            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x+i, TileCoord.y, false, i==this.Power-1);
+            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x+i, TileCoord.y, false, i==this.Power, false);
             if(Result.HasCollision)
                 break;
         }
 
         for(let i = 1; i <= this.Power; i++)
         {
-            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x-i, TileCoord.y, false, i==this.Power-1);
+            let Result = this.BeginPlay_SpawnExplosionOrDestroyObject(TileCoord.x-i, TileCoord.y, false, i==this.Power, true);
             if(Result.HasCollision)
                 break;
         }

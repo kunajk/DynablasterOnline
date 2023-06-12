@@ -64,6 +64,7 @@ class Player
 		this.AnimationRight = AnimationRight;
 		this.AnimationIdle = AnimationIdle;
 		this.CurrentAnim = this.AnimationIdle;
+		this.WasKilled = false;
 
 		let Scale = GameScale;
 		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
@@ -81,24 +82,31 @@ class Player
 	GetPosX()
 	{
 		let Parent_X = (this.Parent) ? this.Parent.GetPosX() : 0.0;
-		return this.Pos_X + Parent_X;
+		return this.Pos_X;// + Parent_X;
 	}
 
 	GetPosY()
 	{
 		let Parent_Y = (this.Parent) ? this.Parent.GetPosY() : 0.0;
-		return this.Pos_Y + Parent_Y;
+		return this.Pos_Y;// + Parent_Y;
 	}
 
 	Draw()
 	{
-		this.CurrentAnim.Draw(this.Pos_X, this.Pos_Y);
-
-		this.Collision.DebugDraw();
+		if(!this.WasKilled)
+		{
+			this.CurrentAnim.Draw(this.Pos_X, this.Pos_Y);
+			this.Collision.DebugDraw();
+		}
 	}
 
 	Update(DeltaTime)
 	{
+		if(this.WasKilled)
+		{
+			return;
+		}
+
 		this.CurrentAnim.Update(DeltaTime);
 		let DistanceToMove = this.PlayerSpeed*DeltaTime;
 
@@ -243,7 +251,7 @@ class Player
 			this.CurrentAnim = this.AnimationIdle;
 		}
 	}
-	Power = 1;
+	Power = 2;
 	OnKeyUp(KeyCode)
 	{
 		switch (KeyCode)
@@ -254,6 +262,14 @@ class Player
 
 				Mapa.AddActor(TileCoord.x, TileCoord.y, new Bomb(this.Power++));
 				break;
+		}
+	}
+
+	Destroy()
+	{
+		if(!this.WasKilled)
+		{
+			this.WasKilled = true;
 		}
 	}
 }
@@ -281,6 +297,8 @@ let offsetX = (P1_AnimationIdle.width - 16)*GameScale*0.5;
 let offsetY = (P1_AnimationIdle.height - 16)*GameScale;
 var Player_1 = new Player(P1StartPos.x - offsetX, P1StartPos.y - offsetY, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
 var Player_2 = new Player(P2StartPos.x - offsetX, P2StartPos.y - offsetY, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
+Mapa.DynamicObjects.push(Player_1);
+Mapa.DynamicObjects.push(Player_2);
 
 let P1_KEY_LEFT = 37; // Strzalka w lewo
 let P1_KEY_RIGHT = 39; // Strzalka w prawo
@@ -301,8 +319,8 @@ function draw()
 	context.clearRect(0, 0, width, height);
 
 	Mapa.Draw();
-	Player_1.Draw();
-	Player_2.Draw();
+	//Player_1.Draw();
+	//Player_2.Draw();
 
 	if(Debug.ShowFPS)
 	{
@@ -340,8 +358,8 @@ function update()
 
 	dt = Math.min(dt, 1.0);
 
-	Player_1.Update(dt);
-	Player_2.Update(dt);
+	//Player_1.Update(dt);
+	//Player_2.Update(dt);
 	Mapa.Update(dt);
 
 	draw();
