@@ -14,6 +14,7 @@ class FireSquare
         this.Collision.SetParent(this);
         this.IsVisible = true;
         this.LifeTime = LifeTime;
+        this.KolejnoscRysowania = KolejnoscRysowania.BombyEksplozje;
     }
 
     SetParent(Parent)
@@ -88,6 +89,7 @@ class Explosion
         this.Power = Power;
         this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
         this.Collision.SetParent(this);
+        this.KolejnoscRysowania = KolejnoscRysowania.BombyEksplozje;
     }
 
     SetParent(Parent)

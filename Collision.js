@@ -1,11 +1,17 @@
+const CollisionFlags = {
+    Block : 1,
+    Overlap : 2
+}
+
 class RectangleCollision
 {
-    constructor(Pos_X, Pos_Y, Width, Height)
+    constructor(Pos_X, Pos_Y, Width, Height, Flags= CollisionFlags.Block)
     {
         this.Pos_X = Pos_X;
         this.Pos_Y = Pos_Y;
         this.Width = Width;
         this.Height = Height;
+        this.CollisionFlags = Flags;
     }
 
 	SetParent(Parent)
@@ -55,6 +61,7 @@ class RectangleCollision
             this.GetPosY() < OtherRectCoision.GetPosY() + OtherRectCoision.Height - VerySmallNumber &&
             this.Height + this.GetPosY() - VerySmallNumber > OtherRectCoision.GetPosY());
     }
+
 
     GetNearestXOutsideCollision(PointX, PointY)
     {

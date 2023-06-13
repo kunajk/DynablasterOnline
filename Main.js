@@ -71,6 +71,7 @@ class Player
 		this.AnimationDead.OnAnimationEnded = {Instance: this, Function: this.OnDestroyed};
 		this.CurrentAnim = this.AnimationIdle;
 		this.WasKilled = false;
+		this.KolejnoscRysowania = KolejnoscRysowania.Postacie;
 
 		let Scale = GameScale;
 		this.Collision = new RectangleCollision(Scale*4, Scale*16, Scale*15, Scale*6).SetParent(this);
@@ -374,8 +375,8 @@ function draw()
 		context.font = "24pt DePixelBreitFett";
 		context.fillStyle = "#FFFFFF"
 		context.strokeStyle = "#000000"
-		context.strokeText(GameOverText, 50, height/2.0-100);
-		context.fillText(GameOverText, 50, height/2.0-100);
+		context.strokeText(GameOverText, 50, height/2.0-300);
+		context.fillText(GameOverText, 50, height/2.0-300);
 	}
 }
 

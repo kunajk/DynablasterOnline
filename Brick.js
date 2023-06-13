@@ -13,9 +13,10 @@ class Brick
         this.BrickGfx = new StaticSprite(Sprite, 38, 131, 16, 16, 1, 0, Scale);
         this.DestroyedGfx = new AnimatedSprite(Sprite, 7, 56, 149, 16, 16, 6, 2, Scale, false);
         this.DestroyedGfx.OnAnimationEnded = {Instance: this, Function: this.OnDestroyed};
-        this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
+        this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale, CollisionFlags.Block);
         this.Collision.SetParent(this);
         this.State = BrickState.NORMAL;
+        this.KolejnoscRysowania = KolejnoscRysowania.Cegly;
     }
 
     SetPos(Pos_X, Pos_Y)

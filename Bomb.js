@@ -12,6 +12,7 @@ class Bomb
         this.Power = Power;
         this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
         this.Collision.SetParent(this);
+        this.KolejnoscRysowania = KolejnoscRysowania.BombyEksplozje;
     }
 
     SetPos(Pos_X, Pos_Y)

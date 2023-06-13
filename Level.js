@@ -1,4 +1,3 @@
-
 const Tiles = {
 	TRAWA: {Index: 0, Collision: false},
 	TRAWA_CIEN: {Index: 1, Collision: false},
@@ -15,6 +14,13 @@ const Tiles = {
 	RAMKA_BOK_LEWO_1: {Index: 12, Collision: true},
 	RAMKA_BOK_LEWO_2: {Index: 13, Collision: true},
 	RAMKA_BOK_LEWO_3: {Index: 14, Collision: true}
+}
+
+const KolejnoscRysowania = {
+	Postacie : 0,
+	BombyEksplozje : 1,
+	PowerUpy : 2,
+	Cegly : 3
 }
 
 class Tile
@@ -170,11 +176,19 @@ class Level
 					(x == this.SizeX - 2) && (y == 2)
 				))
 				{
+					let LiczbaPrzeciwnikow = 13;
 					if(!this.Level[x][y].HasCollision)
 					{
 						let chance = 65;
 						if(Math.random() * 100 < chance)
+						{
 							this.AddActor(x, y, new Brick());
+						}
+						else if(Math.random() * 100 < 35 && LiczbaPrzeciwnikow > 0)
+						{
+							LiczbaPrzeciwnikow--;
+							this.AddActor(x, y, new Enemy());
+						}
 					}
 				}
 			}
@@ -213,6 +227,10 @@ class Level
 		{
 			this.DynamicObjects[i].Update(DeltaTime);
 		}
+
+		this.DynamicObjects.sort(function(a, b) {
+			return b.KolejnoscRysowania - a.KolejnoscRysowania;
+		});
 	}
 
 	PixelToTile(PointX, PointY)
@@ -285,8 +303,13 @@ class Level
 			for (let i = 0; i < this.DynamicObjects.length; i++)
 			{
 				if(this.DynamicObjects[i].Collision.HasCollisionWithPoint(PointX, PointY))
-					return true;
+				{
+					if(this.DynamicObjects[i].Collision.CollisionFlags == CollisionFlags.Block)
+						return true;
+				}
+
 			}
+			return false;
 		}
 		else
 			return true;
