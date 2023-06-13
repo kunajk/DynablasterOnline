@@ -11,6 +11,9 @@ var Debug = {
 	ShowFPS: false
 }
 
+var GameOver = false;
+var GameOverText = "";
+
 var sprites = new Image();
 sprites.src = "DynablasteOnline.png";
 
@@ -54,8 +57,9 @@ class Player
 {
 	CurrentAnim;
 	PlayerSpeed = 50.0 * GameScale;
-	constructor(StartPos_X, StartPos_Y, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle)
+	constructor(Name, StartPos_X, StartPos_Y, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle, AnimationDead)
 	{
+		this.Name = Name;
 		this.Pos_X = StartPos_X;
 		this.Pos_Y = StartPos_Y;
 		this.AnimationUp = AnimationUp;
@@ -63,6 +67,8 @@ class Player
 		this.AnimationDown = AnimationDown;
 		this.AnimationRight = AnimationRight;
 		this.AnimationIdle = AnimationIdle;
+		this.AnimationDead = AnimationDead;
+		this.AnimationDead.OnAnimationEnded = {Instance: this, Function: this.OnDestroyed};
 		this.CurrentAnim = this.AnimationIdle;
 		this.WasKilled = false;
 
@@ -98,12 +104,17 @@ class Player
 			this.CurrentAnim.Draw(this.Pos_X, this.Pos_Y);
 			this.Collision.DebugDraw();
 		}
+		else
+		{
+			this.AnimationDead.Draw(this.Pos_X, this.Pos_Y);
+		}
 	}
 
 	Update(DeltaTime)
 	{
 		if(this.WasKilled)
 		{
+			this.AnimationDead.Update(DeltaTime);
 			return;
 		}
 
@@ -254,6 +265,9 @@ class Player
 	Power = 2;
 	OnKeyUp(KeyCode)
 	{
+		if(this.WasKilled)
+			return;
+
 		switch (KeyCode)
 		{
 			case this.KEY_BOMB:
@@ -272,6 +286,13 @@ class Player
 			this.WasKilled = true;
 		}
 	}
+
+	OnDestroyed()
+	{
+		GameOver = true;
+		GameOverText = (Player_1 == this ? Player_2.Name : Player_1.Name ) + " WYGRAL!"
+		Mapa.RemoveObject(this);
+	}
 }
 
 var AnimFPS = 7;
@@ -281,12 +302,14 @@ var P1_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 0, 53, 24, 22, 3, 0,
 var P1_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 0, 80, 24, 22, 3, 0, GameScale);
 var P1_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 0, 107, 24, 22, 3, 0, GameScale);
 var P1_AnimationIdle = new AnimatedSprite(sprites, 2.5, 0, 1, 24, 22, 3, 0, GameScale);
+var P1_AnimationDead = new AnimatedSprite(sprites, 7, 287, 1, 24, 22, 8, 0, GameScale, false);
 
 var P2_AnimationUp = new AnimatedSprite(sprites, AnimFPS, 72, 26, 24, 22, 3, 0, GameScale);
 var P2_AnimationLeft = new AnimatedSprite(sprites, AnimFPS, 72, 53, 24, 22, 3, 0, GameScale);
 var P2_AnimationDown = new AnimatedSprite(sprites, AnimFPS, 72, 80, 24, 22, 3, 0, GameScale);
 var P2_AnimationRight = new AnimatedSprite(sprites, AnimFPS, 72, 107, 24, 22, 3, 0, GameScale);
 var P2_AnimationIdle = new AnimatedSprite(sprites, 3, 72, 1, 24, 22, 3, 0, GameScale);
+var P2_AnimationDead = new AnimatedSprite(sprites, 7, 287, 26, 24, 22, 8, 0, GameScale, false);
 
 var Mapa = new	Level(6, 4);
 Mapa.TworzMape();
@@ -295,8 +318,8 @@ let P1StartPos = Mapa.TileToPixel(1, 1);
 let P2StartPos = Mapa.TileToPixel(13, 9);
 let offsetX = (P1_AnimationIdle.width - 16)*GameScale*0.5;
 let offsetY = (P1_AnimationIdle.height - 16)*GameScale;
-var Player_1 = new Player(P1StartPos.x - offsetX, P1StartPos.y - offsetY, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle);
-var Player_2 = new Player(P2StartPos.x - offsetX, P2StartPos.y - offsetY, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle);
+var Player_1 = new Player("Niebieski", P1StartPos.x - offsetX, P1StartPos.y - offsetY, P1_AnimationUp, P1_AnimationLeft, P1_AnimationDown, P1_AnimationRight, P1_AnimationIdle, P1_AnimationDead);
+var Player_2 = new Player("Zielony", P2StartPos.x - offsetX, P2StartPos.y - offsetY, P2_AnimationUp, P2_AnimationLeft, P2_AnimationDown, P2_AnimationRight, P2_AnimationIdle, P2_AnimationDead);
 Mapa.DynamicObjects.push(Player_1);
 Mapa.DynamicObjects.push(Player_2);
 
@@ -344,6 +367,16 @@ function draw()
 	context.fillStyle = "#440303"
 	context.fillText("C - Show collisions", 400, 15);
 	context.fillText("F - Show FPS", 400, 30);
+
+	if(GameOver)
+	{
+		context.beginPath();
+		context.font = "24pt DePixelBreitFett";
+		context.fillStyle = "#FFFFFF"
+		context.strokeStyle = "#000000"
+		context.strokeText(GameOverText, 50, height/2.0-100);
+		context.fillText(GameOverText, 50, height/2.0-100);
+	}
 }
 
 

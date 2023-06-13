@@ -11,7 +11,7 @@ class Brick
         let Sprite = new Image();
         Sprite.src = "DynablasteOnline.png";
         this.BrickGfx = new StaticSprite(Sprite, 38, 131, 16, 16, 1, 0, Scale);
-        this.DestroyedGfx = new AnimatedSprite(Sprite, 7, 56, 149, 16, 16, 7, 2, Scale, false);
+        this.DestroyedGfx = new AnimatedSprite(Sprite, 7, 56, 149, 16, 16, 6, 2, Scale, false);
         this.DestroyedGfx.OnAnimationEnded = {Instance: this, Function: this.OnDestroyed};
         this.Collision = new RectangleCollision(0, 0, 16*Scale, 16*Scale);
         this.Collision.SetParent(this);
