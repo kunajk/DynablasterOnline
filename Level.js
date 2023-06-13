@@ -144,6 +144,8 @@ class Level
 			}
 		}
 
+		let LiczbaPrzeciwnikow = 5;
+
 		//Dodajemy pomaranczowe cegly
 		for(let y= 1; y < this.SizeY-1; y++)
 		{
@@ -176,7 +178,6 @@ class Level
 					(x == this.SizeX - 2) && (y == 2)
 				))
 				{
-					let LiczbaPrzeciwnikow = 13;
 					if(!this.Level[x][y].HasCollision)
 					{
 						let chance = 65;
@@ -184,7 +185,7 @@ class Level
 						{
 							this.AddActor(x, y, new Brick());
 						}
-						else if(Math.random() * 100 < 35 && LiczbaPrzeciwnikow > 0)
+						else if(Math.random() * 100 < 10 && LiczbaPrzeciwnikow > 0)
 						{
 							LiczbaPrzeciwnikow--;
 							this.AddActor(x, y, new Enemy());
@@ -249,6 +250,35 @@ class Level
 		return { x, y };
 	}
 
+	HasCollisionWithRect(CollisionBox)
+	{
+		let HasCollision = false;
+		let CollidingObjects = [];
+
+		for(let y= 0; y<this.SizeY; y++)
+		{
+			for(let x= 0; x<this.SizeX; x++)
+			{
+				if(this.Level[x][y].HasCollisionWithRect(CollisionBox))
+				{
+					HasCollision = true;
+					CollidingObjects.push(this.Level[x][y]);
+				}
+			}
+		}
+
+		for (let i = 0; i < this.DynamicObjects.length; i++)
+		{
+			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox))
+			{
+				HasCollision = true;
+				CollidingObjects.push(this.DynamicObjects[i]);
+			}
+
+		}
+
+		return {HasCollision, CollidingObjects};
+	}
 	HasTileCollision(TileX, TileY)
 	{
 		let HasCollision = false;

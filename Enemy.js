@@ -11,6 +11,7 @@ class Enemy
         this.Collision = new RectangleCollision(0, 0, 16*GameScale, 16*GameScale, CollisionFlags.Overlap);
         this.Collision.SetParent(this);
         this.KolejnoscRysowania = KolejnoscRysowania.Postacie;
+        this.Direction = 1;
     }
 
     SetPos(Pos_X, Pos_Y)
@@ -50,6 +51,13 @@ class Enemy
                 if(obj != this.Parent && obj != this)
                     obj.Destroy();
             }
+
+            let DistanceToMove = this.Direction*30.0*DeltaTime;
+            let CollisionTest = new RectangleCollision(this.GetPosX() + DistanceToMove, this.GetPosY(), 16*GameScale, 16*GameScale);
+            if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
+                this.Direction *= -1;
+            else
+                this.Pos_X += DistanceToMove;
 
             this.NormalAnimation.Update(DeltaTime);
         }
