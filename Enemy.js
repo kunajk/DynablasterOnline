@@ -58,7 +58,7 @@ class Enemy
                     obj.Destroy();
             }
 
-            let DistanceToMove = this.Direction*300.0*DeltaTime;
+            let DistanceToMove = this.Direction*30.0*DeltaTime;
 
             if(this.Mode == MovementMode.HORIZONTAL)
             {
