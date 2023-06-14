@@ -144,7 +144,7 @@ class Level
 			}
 		}
 
-		let LiczbaPrzeciwnikow = 5;
+		let CandidatesForEnemyPlaces = [];
 
 		//Dodajemy pomaranczowe cegly
 		for(let y= 1; y < this.SizeY-1; y++)
@@ -185,14 +185,30 @@ class Level
 						{
 							this.AddActor(x, y, new Brick());
 						}
-						else if(Math.random() * 100 < 10 && LiczbaPrzeciwnikow > 0)
+						else
 						{
-							LiczbaPrzeciwnikow--;
-							this.AddActor(x, y, new Enemy());
+							CandidatesForEnemyPlaces.push({ TileX: x, TileY: y })
 						}
 					}
 				}
 			}
+		}
+
+		//Rozmiesc przeciwnikow
+		let EnemiesToSpawn = 5;
+		let index = 0;
+		while(EnemiesToSpawn > 0)
+		{
+			if(Math.random() * 100 < 10)
+			{
+				EnemiesToSpawn--;
+				this.AddActor(CandidatesForEnemyPlaces[index].TileX, CandidatesForEnemyPlaces[index].TileY, new Enemy());
+				const indexToDelete = CandidatesForEnemyPlaces.indexOf(CandidatesForEnemyPlaces[index]);
+				CandidatesForEnemyPlaces.splice(indexToDelete, 1);
+			}
+			index++;
+			if(index >= CandidatesForEnemyPlaces.length)
+				index = 0;
 		}
 	}
 
@@ -269,10 +285,12 @@ class Level
 
 		for (let i = 0; i < this.DynamicObjects.length; i++)
 		{
-			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox))
-			{
-				HasCollision = true;
-				CollidingObjects.push(this.DynamicObjects[i]);
+			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox)) {
+				if (this.DynamicObjects[i].Collision.CollisionFlags == CollisionFlags.Block)
+				{
+					HasCollision = true;
+					CollidingObjects.push(this.DynamicObjects[i]);
+				}
 			}
 
 		}
