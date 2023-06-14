@@ -1,3 +1,8 @@
+
+const MovementMode = {
+    VERTICAL : 0,
+    HORIZONTAL : 1
+}
 class Enemy
 {
     constructor()
@@ -12,6 +17,7 @@ class Enemy
         this.Collision.SetParent(this);
         this.KolejnoscRysowania = KolejnoscRysowania.Postacie;
         this.Direction = 1;
+        this.Mode = MovementMode.HORIZONTAL;
     }
 
     SetPos(Pos_X, Pos_Y)
@@ -52,12 +58,52 @@ class Enemy
                     obj.Destroy();
             }
 
-            let DistanceToMove = this.Direction*30.0*DeltaTime;
-            let CollisionTest = new RectangleCollision(this.GetPosX() + DistanceToMove, this.GetPosY(), 16*GameScale, 16*GameScale);
-            if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
-                this.Direction *= -1;
+            let DistanceToMove = this.Direction*300.0*DeltaTime;
+
+            if(this.Mode == MovementMode.HORIZONTAL)
+            {
+                let CollisionTest = new RectangleCollision(this.GetPosX() + DistanceToMove, this.GetPosY(), 16*GameScale, 16*GameScale);
+                if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
+                {
+                    CollisionTest = new RectangleCollision(this.GetPosX() - DistanceToMove, this.GetPosY(), 16*GameScale, 16*GameScale);
+                    if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
+                        this.Mode = MovementMode.VERTICAL;
+                    else
+                    {
+                        if(Math.random() * 100 < 50)
+                            this.Mode = MovementMode.VERTICAL;
+                        else
+                        {
+                            this.Direction *= -1;
+                        }
+
+                    }
+                }
+                else
+                    this.Pos_X += DistanceToMove;
+            }
             else
-                this.Pos_X += DistanceToMove;
+            {
+                let CollisionTest = new RectangleCollision(this.GetPosX(), this.GetPosY() + DistanceToMove, 16*GameScale, 16*GameScale);
+                if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
+                {
+                    CollisionTest = new RectangleCollision(this.GetPosX(), this.GetPosY() - DistanceToMove, 16*GameScale, 16*GameScale);
+                    if(Mapa.HasCollisionWithRect(CollisionTest).CollidingObjects.length > 1)
+                        this.Mode = MovementMode.HORIZONTAL;
+                    else
+                    {
+                        if(Math.random() * 100 < 50)
+                            this.Mode = MovementMode.HORIZONTAL;
+                        else
+                        {
+                            this.Direction *= -1;
+                        }
+                    }
+
+                }
+                else
+                    this.Pos_Y += DistanceToMove;
+            }
 
             this.NormalAnimation.Update(DeltaTime);
         }
