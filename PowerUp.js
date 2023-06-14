@@ -52,6 +52,9 @@ class PowerUp
         {
             if(object instanceof Player)
             {
+                var SfxPowerUp = new Audio('powerup.mp3');
+                SfxPowerUp.play();
+
                 this.ApplyPowerUp(object);
                 Mapa.RemoveObject(this);
             }

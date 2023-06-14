@@ -27,11 +27,20 @@ canvas.style.width = width + "px";
 canvas.style.height = height + "px";
 context.scale(ratio, ratio);
 
+var Muzyka = new Audio('theme.mp3');
+var IsMusiscStarted = false;
+
 // Informacja o aktualnie wcisnietych klawiszach
 var PressedKeys={};
 // Jesli klikniemy poza przegladarke kasujemy informacje o wcisnietych klawiszach
 window.addEventListener('blur',()=>PressedKeys = {},false);
 window.addEventListener('keydown', function(event) {
+	if(!IsMusiscStarted)
+	{
+		Muzyka.play();
+		IsMusiscStarted = true;
+	}
+
 	event = event || window.event;
     PressedKeys[event.keyCode] = true;	
 }, false);
@@ -310,6 +319,10 @@ class Player
 		GameOver = true;
 		GameOverText = (Player_1 == this ? Player_2.Name : Player_1.Name ) + " WYGRAL!"
 		GameOverTime = 0;
+		Muzyka.pause();
+		var GameOverMusic = new Audio('music.mp3');
+		GameOverMusic.play();
+
 		Mapa.RemoveObject(this);
 	}
 }

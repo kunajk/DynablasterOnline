@@ -169,6 +169,9 @@ class Explosion
     }
     BeginPlay()
     {
+        var SfxBomb = new Audio('shot.wav');
+        SfxBomb.play();
+
         this.FireObjects.push(new FireSquare(this.Pos_X, this.Pos_Y, this.CenterGfx, this.LifeTime));
 
         let CenterPoint = this.Collision.GetCenterPoint();
