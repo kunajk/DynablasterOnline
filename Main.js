@@ -13,6 +13,7 @@ var Debug = {
 
 var GameOver = false;
 var GameOverText = "";
+var GameOverTime;
 
 var sprites = new Image();
 sprites.src = "DynablasteOnline.png";
@@ -57,6 +58,10 @@ class Player
 {
 	CurrentAnim;
 	PlayerSpeed = 50.0 * GameScale;
+	BombPower = 1;
+	MaxBombCount = 1;
+	CurrentBombCount = 0;
+
 	constructor(Name, StartPos_X, StartPos_Y, AnimationUp, AnimationLeft, AnimationDown, AnimationRight, AnimationIdle, AnimationDead)
 	{
 		this.Name = Name;
@@ -263,20 +268,32 @@ class Player
 			this.CurrentAnim = this.AnimationIdle;
 		}
 	}
-	Power = 2;
+
+	OnBombExploded()
+	{
+		this.CurrentBombCount--;
+	}
 	OnKeyUp(KeyCode)
 	{
-		if(this.WasKilled)
+		if(this.WasKilled || GameOver)
 			return;
 
 		switch (KeyCode)
 		{
 			case this.KEY_BOMB:
-				let CenterPoint = this.Collision.GetCenterPoint();
-				let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
+			{
+				if(this.CurrentBombCount < this.MaxBombCount)
+				{
+					let CenterPoint = this.Collision.GetCenterPoint();
+					let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
+					let NewBomb = new Bomb(this.BombPower);
 
-				Mapa.AddActor(TileCoord.x, TileCoord.y, new Bomb(this.Power++));
-				break;
+					NewBomb.OnBombExplode = {Instance: this, Function: this.OnBombExploded};
+					Mapa.AddActor(TileCoord.x, TileCoord.y, NewBomb);
+
+					this.CurrentBombCount++;
+				}
+			} break;
 		}
 	}
 
@@ -292,6 +309,7 @@ class Player
 	{
 		GameOver = true;
 		GameOverText = (Player_1 == this ? Player_2.Name : Player_1.Name ) + " WYGRAL!"
+		GameOverTime = 0;
 		Mapa.RemoveObject(this);
 	}
 }
@@ -358,25 +376,38 @@ function draw()
 	}
 
 	context.beginPath();
-	context.font = "8pt serif";
-	context.rect(190, 5, 500, 40);
-	context.fillStyle = "#FFFFFF"
-	context.fill();
-	context.fillStyle = "#000000"
-	context.fillText("Player 1: sterowanie strzalkami", 200, 15);
-	context.fillText("Player 2: sterowanie klawiszami W S A D", 200, 30);
-	context.fillStyle = "#440303"
-	context.fillText("C - Show collisions", 400, 15);
-	context.fillText("F - Show FPS", 400, 30);
+
 
 	if(GameOver)
 	{
 		context.beginPath();
-		context.font = "24pt DePixelBreitFett";
+		context.rect(0, 0, Mapa.SizeX*16*GameScale, Mapa.SizeY*16*GameScale);
+		let alpha = Math.min(GameOverTime, 3.0)/3.0 * (1);
+		context.fillStyle = "rgba(0, 0, 0, " + alpha +")";
+		context.fill();
+		if(GameOverTime > 3.5)
+		{
+			let alpha2 = Math.min(GameOverTime-3.5, 1) * (1);
+
+			context.font = "20pt DePixelBreitFett";
+			context.fillStyle = "rgba(255,255,255,"+alpha2+")";
+			context.strokeStyle = "#000000"
+			context.strokeText(GameOverText, 50, height/2.0-300);
+			context.fillText(GameOverText, 50, height/2.0-300);
+		}
+	}
+	else
+	{
+		context.font = "8pt serif";
+		context.rect(190, 5+Mapa.SizeY*16*GameScale, 500, 40);
 		context.fillStyle = "#FFFFFF"
-		context.strokeStyle = "#000000"
-		context.strokeText(GameOverText, 50, height/2.0-300);
-		context.fillText(GameOverText, 50, height/2.0-300);
+		context.fill();
+		context.fillStyle = "#000000"
+		context.fillText("Player 1: sterowanie strzalkami", 200, 15+Mapa.SizeY*16*GameScale);
+		context.fillText("Player 2: sterowanie klawiszami W S A D", 200, 30+Mapa.SizeY*16*GameScale);
+		context.fillStyle = "#440303"
+		context.fillText("C - Show collisions", 400, 15+Mapa.SizeY*16*GameScale);
+		context.fillText("F - Show FPS", 400, 30+Mapa.SizeY*16*GameScale);
 	}
 }
 
@@ -395,6 +426,11 @@ function update()
 	//Player_1.Update(dt);
 	//Player_2.Update(dt);
 	Mapa.Update(dt);
+
+	if(GameOver)
+	{
+		GameOverTime += dt;
+	}
 
 	draw();
 	requestAnimationFrame(update);

@@ -3,6 +3,7 @@ class Bomb
 {
     LifeTime = 3.0;
     WasUsed = false;
+    OnBombExplode = { Instance : null, Function : null};
     constructor(Power)
     {
         let Scale = GameScale;
@@ -70,6 +71,9 @@ class Bomb
             let TileCoord = Mapa.PixelToTile(CenterPoint.x, CenterPoint.y);
             this.Parent.AddActor(TileCoord.x, TileCoord.y, new Explosion(this.Power));
             this.Parent.RemoveObject(this);
+
+            if(this.OnBombExplode.Instance != null && this.OnBombExplode.Function != null)
+                this.OnBombExplode.Function.call(this.OnBombExplode.Instance);
         }
     }
 }

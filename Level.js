@@ -19,8 +19,8 @@ const Tiles = {
 const KolejnoscRysowania = {
 	Postacie : 0,
 	BombyEksplozje : 1,
-	PowerUpy : 2,
-	Cegly : 3
+	Cegly : 2,
+	PowerUpy : 3
 }
 
 class Tile
@@ -145,6 +145,7 @@ class Level
 		}
 
 		let CandidatesForEnemyPlaces = [];
+		let CandidatesForPowerUps = [];
 
 		//Dodajemy pomaranczowe cegly
 		for(let y= 1; y < this.SizeY-1; y++)
@@ -180,10 +181,11 @@ class Level
 				{
 					if(!this.Level[x][y].HasCollision)
 					{
-						let chance = 65;
+						let chance = 60;
 						if(Math.random() * 100 < chance)
 						{
 							this.AddActor(x, y, new Brick());
+							CandidatesForPowerUps.push({ TileX: x, TileY: y })
 						}
 						else
 						{
@@ -195,7 +197,7 @@ class Level
 		}
 
 		//Rozmiesc przeciwnikow
-		let EnemiesToSpawn = 5;
+		let EnemiesToSpawn = 3;
 		let index = 0;
 		while(EnemiesToSpawn > 0)
 		{
@@ -208,6 +210,31 @@ class Level
 			}
 			index++;
 			if(index >= CandidatesForEnemyPlaces.length)
+				index = 0;
+		}
+
+		//Rozmiesc powerUpy
+		let PowerUpsToPlace = [
+			new PowerUp(PowerUpType.BombPower),
+			new PowerUp(PowerUpType.BombPower),
+			new PowerUp(PowerUpType.BombPower),
+			new PowerUp(PowerUpType.BombPower),
+			new PowerUp(PowerUpType.BombCount),
+			new PowerUp(PowerUpType.BombCount),
+			new PowerUp(PowerUpType.BombCount),
+			new PowerUp(PowerUpType.BombCount)
+		];
+		index = 0;
+		while(PowerUpsToPlace.length > 0)
+		{
+			if(Math.random() * 100.0 < 5)
+			{
+				this.AddActor(CandidatesForPowerUps[index].TileX, CandidatesForPowerUps[index].TileY, PowerUpsToPlace.pop());
+				const indexToDelete = CandidatesForPowerUps.indexOf(CandidatesForPowerUps[index]);
+				CandidatesForPowerUps.splice(indexToDelete, 1);
+			}
+			index++;
+			if(index >= CandidatesForPowerUps.length)
 				index = 0;
 		}
 	}
@@ -285,12 +312,10 @@ class Level
 
 		for (let i = 0; i < this.DynamicObjects.length; i++)
 		{
-			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox)) {
-				if (this.DynamicObjects[i].Collision.CollisionFlags == CollisionFlags.Block)
-				{
-					HasCollision = true;
-					CollidingObjects.push(this.DynamicObjects[i]);
-				}
+			if(this.DynamicObjects[i].Collision.HasCollisionWithRect(CollisionBox))
+			{
+				HasCollision = true;
+				CollidingObjects.push(this.DynamicObjects[i]);
 			}
 
 		}

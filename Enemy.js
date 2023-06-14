@@ -70,7 +70,7 @@ class Enemy
                         this.Mode = MovementMode.VERTICAL;
                     else
                     {
-                        if(Math.random() * 100 < 50)
+                        if(Math.random() * 100.0 < 50)
                             this.Mode = MovementMode.VERTICAL;
                         else
                         {
@@ -92,7 +92,7 @@ class Enemy
                         this.Mode = MovementMode.HORIZONTAL;
                     else
                     {
-                        if(Math.random() * 100 < 50)
+                        if(Math.random() * 100.0 < 50)
                             this.Mode = MovementMode.HORIZONTAL;
                         else
                         {
@@ -124,6 +124,8 @@ class Enemy
         {
             this.DeadAnimation.Draw(this.Pos_X, this.Pos_Y-OffsetY);
         }
+
+        this.Collision.DebugDraw();
     }
 
     Destroy()
