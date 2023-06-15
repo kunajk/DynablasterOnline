@@ -317,7 +317,7 @@ class Player
 	OnDestroyed()
 	{
 		GameOver = true;
-		GameOverText = (Player_1 == this ? Player_2.Name : Player_1.Name ) + " WYGRAL!"
+		GameOverText = (Player_1 == this ? Player_2.Name : Player_1.Name ) + " WYGRYWA!"
 		GameOverTime = 0;
 		Muzyka.pause();
 		var GameOverMusic = new Audio('music.mp3');
@@ -359,12 +359,12 @@ let P1_KEY_LEFT = 37; // Strzalka w lewo
 let P1_KEY_RIGHT = 39; // Strzalka w prawo
 let P1_KEY_UP = 38; // Strzalka w gore
 let P1_KEY_DOWN = 40; // Strzalka w dol
-let P1_KEY_BOMB = 32 // Spacja
+let P1_KEY_BOMB = 17; // Prawy ctrl
 let P2_KEY_LEFT = 65; // Klawisz 'A'
 let P2_KEY_RIGHT = 68; // Klawisz 'D'
 let P2_KEY_UP = 87; // Klawisz 'W'
 let P2_KEY_DOWN = 83; // Klawisz 'S'
-let P2_KEY_BOMB = 96; // Numpad 0
+let P2_KEY_BOMB = 32 // Spacja
 
 Player_1.SetKeys(P1_KEY_LEFT, P1_KEY_RIGHT, P1_KEY_UP, P1_KEY_DOWN, P1_KEY_BOMB);
 Player_2.SetKeys(P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_UP, P2_KEY_DOWN, P2_KEY_BOMB);
@@ -402,7 +402,7 @@ function draw()
 		{
 			let alpha2 = Math.min(GameOverTime-3.5, 1) * (1);
 
-			context.font = "20pt DePixelBreitFett";
+			context.font = "19pt DePixelBreitFett";
 			context.fillStyle = "rgba(255,255,255,"+alpha2+")";
 			context.strokeStyle = "#000000"
 			context.strokeText(GameOverText, 50, height/2.0-300);
